@@ -3,6 +3,10 @@ public enum OddBool: String, Codable {
 }
 
 public struct ChargingProfile: Codable {
+  public static func url(for vin: String) -> String {
+    return "/api/vehicle/remoteservices/chargingprofile/v1/\(vin)"
+  }
+
   public let pendingUpdate: Bool
   public let weekTimer: WeekTimer
   public let xmlVersion: XMLVersion

@@ -1,4 +1,8 @@
 public struct Navigation: Codable {
+  public static func url(for vin: String) -> String {
+    return "/api/vehicle/navigation/v1/\(vin)"
+  }
+
   public let auxPowerEcoPro: Double
   public let auxPowerEcoProPlus: Double
   public let auxPowerRegular: Double
