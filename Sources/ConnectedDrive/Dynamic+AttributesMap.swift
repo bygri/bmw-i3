@@ -1,20 +1,20 @@
 extension Dynamic {
   public struct AttributesMap: Codable {
-    public let batterySizeMax: String
-    public let beMaxRangeElectric: String
-    public let beMaxRangeElectricKm: String
-    public let beMaxRangeElectricMile: String
-    public let beRemainingRangeElectric: String
-    public let beRemainingRangeElectricKm: String
-    public let beRemainingRangeElectricMile: String
-    public let beRemainingRangeFuel: String
-    public let beRemainingRangeFuelKm: String
-    public let beRemainingRangeFuelMile: String
+    public let batterySizeMax: Int
+    public let beMaxRangeElectric: Double
+    public let beMaxRangeElectricKm: Double
+    public let beMaxRangeElectricMile: Double
+    public let beRemainingRangeElectric: Double
+    public let beRemainingRangeElectricKm: Double
+    public let beRemainingRangeElectricMile: Double
+    public let beRemainingRangeFuel: Double
+    public let beRemainingRangeFuelKm: Double
+    public let beRemainingRangeFuelMile: Double
     public let chargeNowAllowed: ChargeNowAllowed
     public let chargingConnectionType: ChargingConnectionType
     public let chargingHVStatus: ChargingHVStatus
     public let chargingInductivePositioning: ChargingInductivePositioning
-    public let chargingLevelHv: String
+    public let chargingLevelHv: Double
     public let chargingLogicCurrentlyActive: ChargingLogic
     public let chargingStatus: ChargingStatus
     public let chargingSystemStatus: ChargingStatus
@@ -29,31 +29,31 @@ extension Dynamic {
     public let doorLockState: DoorLockState
     public let doorPassengerFront: OpenCloseState
     public let doorPassengerRear: DoorStatus
-    public let gpsLat: String
-    public let gpsLng: String
-    public let heading: String
+    public let fuelPercent: Int
+    public let gpsLat: Double
+    public let gpsLng: Double
+    public let heading: Int
     public let headUnit: HeadUnit
     public let headUnitPUSoftware: String
     public let hoodState: HoodState
-    public let kombiCurrentRemainingRangeFuel: String
-    public let fuelPercent: String
+    public let kombiCurrentRemainingRangeFuel: Double
     public let lastChargingEndReason: ChargingEndReason
     public let lastChargingEndResult: ChargingEndResult
     public let lastUpdateReason: UpdateReason
     public let lightsParking: LightsParking
     public let lscTrigger: LSCTrigger
-    public let mileage: String
+    public let mileage: Int
     public let prognosisWhileChargingStatus: PrognosisWhileCharging
-    public let remainingFuel: String
-    public let segmentLastTripRatioElectricDrivenDistance: String
+    public let remainingFuel: Int
+    public let segmentLastTripRatioElectricDrivenDistance: Int
     public let segmentLastTripTimeSegmentEnd: String
     public let segmentLastTripTimeSegmentEndFormatted: String
     public let segmentLastTripTimeSegmentEndFormattedDate: String
     public let segmentLastTripTimeSegmentEndFormattedTime: String
     public let shdStatusUnified: ShdStatusUnified
     public let singleImmediateCharging: SingleImmediateCharging
-    public let socHVPercent: String
-    public let sunroofPosition: String
+    public let socHVPercent: Double
+    public let sunroofPosition: Int
     public let sunroofState: SunroofState
     public let trunkState: TrunkState
     public let unitOfCombustionConsumption: String
@@ -64,8 +64,8 @@ extension Dynamic {
     public let updateTimeConverted: String
     public let updateTimeConvertedDate: String
     public let updateTimeConvertedTime: String
-    public let updateTimeConvertedTimestamp: String
-    public let vehicleTracking: String
+    public let updateTimeConvertedTimestamp: Int
+    public let vehicleTracking: Int
     public let windowDriverFront: WindowStatus
     public let windowDriverRear: WindowStatus
     public let windowPassengerFront: WindowStatus
@@ -101,6 +101,7 @@ extension Dynamic {
       case doorLockState = "door_lock_state"
       case doorPassengerFront = "door_passenger_front"
       case doorPassengerRear = "door_passenger_rear"
+      case fuelPercent
       case gpsLat = "gps_lat"
       case gpsLng = "gps_lng"
       case heading
@@ -108,7 +109,6 @@ extension Dynamic {
       case headUnitPUSoftware = "head_unit_pu_software"
       case hoodState = "hood_state"
       case kombiCurrentRemainingRangeFuel = "kombi_current_remaining_range_fuel"
-      case fuelPercent
       case lastChargingEndResult
       case lastChargingEndReason
       case lastUpdateReason
@@ -142,6 +142,80 @@ extension Dynamic {
       case windowDriverRear = "window_driver_rear"
       case windowPassengerFront = "window_passenger_front"
       case windowPassengerRear = "window_passenger_rear"
+    }
+
+    public init(from decoder: Decoder) throws {
+      let values = try decoder.container(keyedBy: CodingKeys.self)
+      batterySizeMax = try unwrapInt(from: values.decode(String.self, forKey: .batterySizeMax))
+      beMaxRangeElectric = try unwrapDouble(from: values.decode(String.self, forKey: .beMaxRangeElectric))
+      beMaxRangeElectricKm = try unwrapDouble(from: values.decode(String.self, forKey: .beMaxRangeElectricKm))
+      beMaxRangeElectricMile = try unwrapDouble(from: values.decode(String.self, forKey: .beMaxRangeElectricMile))
+      beRemainingRangeElectric = try unwrapDouble(from: values.decode(String.self, forKey: .beRemainingRangeElectric))
+      beRemainingRangeElectricKm = try unwrapDouble(from: values.decode(String.self, forKey: .beRemainingRangeElectricKm))
+      beRemainingRangeElectricMile = try unwrapDouble(from: values.decode(String.self, forKey: .beRemainingRangeElectricMile))
+      beRemainingRangeFuel = try unwrapDouble(from: values.decode(String.self, forKey: .beRemainingRangeFuel))
+      beRemainingRangeFuelKm = try unwrapDouble(from: values.decode(String.self, forKey: .beRemainingRangeFuelKm))
+      beRemainingRangeFuelMile = try unwrapDouble(from: values.decode(String.self, forKey: .beRemainingRangeFuelMile))
+      chargeNowAllowed = try values.decode(ChargeNowAllowed.self, forKey: .chargeNowAllowed)
+      chargingConnectionType = try values.decode(ChargingConnectionType.self, forKey: .chargingConnectionType)
+      chargingHVStatus = try values.decode(ChargingHVStatus.self, forKey: .chargingHVStatus)
+      chargingInductivePositioning = try values.decode(ChargingInductivePositioning.self, forKey: .chargingInductivePositioning)
+      chargingLevelHv = try unwrapDouble(from: values.decode(String.self, forKey: .chargingLevelHv))
+      chargingLogicCurrentlyActive = try values.decode(ChargingLogic.self, forKey: .chargingLogicCurrentlyActive)
+      chargingStatus = try values.decode(ChargingStatus.self, forKey: .chargingStatus)
+      chargingSystemStatus = try values.decode(ChargingStatus.self, forKey: .chargingSystemStatus)
+      chargingTimeRemaining = try values.decodeIfPresent(String.self, forKey: .chargingTimeRemaining)
+      checkControlMessages = try values.decode(String.self, forKey: .checkControlMessages)
+      conditionBasedServices = try values.decode(String.self, forKey: .conditionBasedServices)
+      connectorStatus = try values.decode(ConnectorStatus.self, forKey: .connectorStatus)
+      dcsCCHActivation = try values.decodeIfPresent(String.self, forKey: .dcsCCHActivation)
+      dcsCCHOngoing = try values.decodeIfPresent(String.self, forKey: .dcsCCHOngoing)
+      doorDriverFront = try values.decode(DoorStatus.self, forKey: .doorDriverFront)
+      doorDriverRear = try values.decode(DoorStatus.self, forKey: .doorDriverRear)
+      doorLockState = try values.decode(DoorLockState.self, forKey: .doorLockState)
+      doorPassengerFront = try values.decode(OpenCloseState.self, forKey: .doorPassengerFront)
+      doorPassengerRear = try values.decode(DoorStatus.self, forKey: .doorPassengerRear)
+      fuelPercent = try unwrapInt(from: values.decode(String.self, forKey: .fuelPercent))
+      gpsLat = try unwrapDouble(from: values.decode(String.self, forKey: .gpsLat))
+      gpsLng = try unwrapDouble(from: values.decode(String.self, forKey: .gpsLng))
+      heading = try unwrapInt(from: values.decode(String.self, forKey: .heading))
+      headUnit = try values.decode(HeadUnit.self, forKey: .headUnit)
+      headUnitPUSoftware = try values.decode(String.self, forKey: .headUnitPUSoftware)
+      hoodState = try values.decode(HoodState.self, forKey: .hoodState)
+      kombiCurrentRemainingRangeFuel = try unwrapDouble(from: values.decode(String.self, forKey: .kombiCurrentRemainingRangeFuel))
+      lastChargingEndReason = try values.decode(ChargingEndReason.self, forKey: .lastChargingEndReason)
+      lastChargingEndResult = try values.decode(ChargingEndResult.self, forKey: .lastChargingEndResult)
+      lastUpdateReason = try values.decode(UpdateReason.self, forKey: .lastUpdateReason)
+      lightsParking = try values.decode(LightsParking.self, forKey: .lightsParking)
+      lscTrigger = try values.decode(LSCTrigger.self, forKey: .lscTrigger)
+      mileage = try unwrapInt(from: values.decode(String.self, forKey: .mileage))
+      prognosisWhileChargingStatus = try values.decode(PrognosisWhileCharging.self, forKey: .prognosisWhileChargingStatus)
+      remainingFuel = try unwrapInt(from: values.decode(String.self, forKey: .remainingFuel))
+      segmentLastTripRatioElectricDrivenDistance = try unwrapInt(from: values.decode(String.self, forKey: .segmentLastTripRatioElectricDrivenDistance))
+      segmentLastTripTimeSegmentEnd = try values.decode(String.self, forKey: .segmentLastTripTimeSegmentEnd)
+      segmentLastTripTimeSegmentEndFormatted = try values.decode(String.self, forKey: .segmentLastTripTimeSegmentEndFormatted)
+      segmentLastTripTimeSegmentEndFormattedDate = try values.decode(String.self, forKey: .segmentLastTripTimeSegmentEndFormattedDate)
+      segmentLastTripTimeSegmentEndFormattedTime = try values.decode(String.self, forKey: .segmentLastTripTimeSegmentEndFormattedTime)
+      shdStatusUnified = try values.decode(ShdStatusUnified.self, forKey: .shdStatusUnified)
+      singleImmediateCharging = try values.decode(SingleImmediateCharging.self, forKey: .singleImmediateCharging)
+      socHVPercent = try unwrapDouble(from: values.decode(String.self, forKey: .socHVPercent))
+      sunroofPosition = try unwrapInt(from: values.decode(String.self, forKey: .sunroofPosition))
+      sunroofState = try values.decode(SunroofState.self, forKey: .sunroofState)
+      trunkState = try values.decode(TrunkState.self, forKey: .trunkState)
+      unitOfCombustionConsumption = try values.decode(String.self, forKey: .unitOfCombustionConsumption)
+      unitOfElectricConsumption = try values.decode(String.self, forKey: .unitOfElectricConsumption)
+      unitOfEnergy = try values.decode(String.self, forKey: .unitOfEnergy)
+      unitOfLength = try values.decode(String.self, forKey: .unitOfLength)
+      updateTime = try values.decode(String.self, forKey: .updateTime)
+      updateTimeConverted = try values.decode(String.self, forKey: .updateTimeConverted)
+      updateTimeConvertedDate = try values.decode(String.self, forKey: .updateTimeConvertedDate)
+      updateTimeConvertedTime = try values.decode(String.self, forKey: .updateTimeConvertedTime)
+      updateTimeConvertedTimestamp = try unwrapInt(from: values.decode(String.self, forKey: .updateTimeConvertedTimestamp))
+      vehicleTracking = try unwrapInt(from: values.decode(String.self, forKey: .vehicleTracking))
+      windowDriverFront = try values.decode(WindowStatus.self, forKey: .windowDriverFront)
+      windowDriverRear = try values.decode(WindowStatus.self, forKey: .windowDriverRear)
+      windowPassengerFront = try values.decode(WindowStatus.self, forKey: .windowPassengerFront)
+      windowPassengerRear = try values.decode(WindowStatus.self, forKey: .windowPassengerRear)
     }
   }
 
@@ -226,4 +300,18 @@ extension Dynamic {
     case chargingStarted = "CHARGINGSTARTED"
     case vehicleShutdownSecured = "VEHCSHUTDOWN_SECURED"
   }
+}
+
+private func unwrapInt(from string: String) throws -> Int {
+  guard let unwrapped = Int(string) else {
+    throw ConnectedDriveError.invalidConversion
+  }
+  return unwrapped
+}
+
+private func unwrapDouble(from string: String) throws -> Double {
+  guard let unwrapped = Double(string) else {
+    throw ConnectedDriveError.invalidConversion
+  }
+  return unwrapped
 }

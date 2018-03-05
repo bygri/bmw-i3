@@ -114,7 +114,7 @@ class DynamicTests: XCTestCase {
     }
     """.data(using: .utf8)!
     let dynamic = try JSONDecoder().decode(Dynamic.self, from: jsonFile)
-    XCTAssertEqual(dynamic.attributesMap.fuelPercent, "47")
+    XCTAssertEqual(dynamic.attributesMap.fuelPercent, 47)
   }
 
   func testFileTwo() throws {
@@ -220,7 +220,7 @@ class DynamicTests: XCTestCase {
     }
     """.data(using: .utf8)!
     let dynamic = try JSONDecoder().decode(Dynamic.self, from: jsonFile)
-    XCTAssertEqual(dynamic.attributesMap.fuelPercent, "47")
+    XCTAssertEqual(dynamic.attributesMap.fuelPercent, 47)
   }
 
 }
