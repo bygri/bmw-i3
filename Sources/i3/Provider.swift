@@ -10,7 +10,9 @@ public final class Provider: Vapor.Provider {
 
   init() {}
 
-  public func boot(_ config: Config) throws {}
+  public func boot(_ config: Config) throws {
+    config.preparations.append(Datum.Migration1.self)
+  }
 
   public func boot(_ drop: Droplet) throws {
   }
