@@ -1,0 +1,8 @@
+FROM swift:4
+
+RUN apt-get -qq update && apt-get -q -y install \
+  tzdata \
+  libmysqlclient-dev \
+  && rm -r /var/lib/apt/lists/*
+
+WORKDIR /app

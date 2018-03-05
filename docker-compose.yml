@@ -1,0 +1,20 @@
+version: "3"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile-up
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    stdin_open: true
+    tty: true
+    entrypoint: bash
+  db:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=i3
+      - MYSQL_USER=i3
+      - MYSQL_PASSWORD=i3
