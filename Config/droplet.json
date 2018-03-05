@@ -1,0 +1,8 @@
+{
+  "console": "terminal",
+  "log": "console",
+  "commands": [
+    "fetch"
+  ],
+  "cache": "fluent"
+}
