@@ -3,47 +3,39 @@ import JSON
 import Vapor
 
 final class Routes: RouteCollection {
+  let view: ViewRenderer
+
+  init(_ view: ViewRenderer) {
+    self.view = view
+  }
 
   func build(_ builder: RouteBuilder) throws {
+    // Index: redirect to records
+    builder.get() { req in
+      return Response(redirect: "/records")
+    }
+
+    // Records index: show all records
     builder.get("records") { req in
-      // Sneaky HTML table of all records
-      var html = """
-      <html><head></head><body>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Date</th>
-            <th>Odometer</th>
-            <th>Battery</th>
-            <th>Fuel</th>
-            <th>Charging</th>
-            <th>Connected</th>
-            <th>Locked</th>
-          </tr>
-        </thead>
-        <tbody>
-      """
-      try Record.makeQuery().chunk(4) { try $0.forEach { record in
-        html += try """
-          <tr>
-            <th>\(record.assertExists().int!)</th>
-            <td>\(record.date)</td>
-            <td>\(record.odometer)</td>
-            <td>\(record.batteryPercent)%</td>
-            <td>\(record.fuelPercent)%</td>
-            <td>\(record.isCharging)</td>
-            <td>\(record.isConnected)</td>
-            <td>\(record.isLocked)</td>
-          </tr>
-        """
-      }}
-      html += """
-        </tbody>
-      </table>
-      </body></html>
-      """
-      return Response(status: .ok, body: html)
+      var ctx = Node([:])
+      try ctx.set("records", Record.makeQuery().all().map { record in
+        var node = Node([:])
+        try node.set("date", record.date)
+        try node.set("odometer", record.odometer)
+        try node.set("batteryPercent", record.batteryPercent)
+        try node.set("fuelPercent", record.fuelPercent)
+        try node.set("isCharging", record.isCharging)
+        try node.set("isConnected", record.isConnected)
+        try node.set("isLocked", record.isLocked)
+        try node.set("latitude", record.latitude)
+        try node.set("longitude", record.longitude)
+        try node.set("heading", record.heading)
+        try node.set("chargingEndResult", record.chargingEndResult.rawValue)
+        try node.set("chargingEndReason", record.chargingEndReason.rawValue)
+        try node.set("updateReason", record.updateReason.rawValue)
+        return node
+      })
+      return try self.view.make("Records", ctx)
     }
 
     builder.get("records", Record.parameter) { req in

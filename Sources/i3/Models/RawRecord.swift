@@ -19,7 +19,7 @@ final class RawRecord: Model {
   init(data: Bytes) {
     date = Date()
     self.data = data
-    checksum = data.map { Int($0) }.reduce(0, +) & 0xff
+    checksum = data.map { Int($0) }.reduce(0, +)
   }
 
   // Fluent

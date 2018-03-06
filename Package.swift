@@ -13,6 +13,10 @@ let package = Package(
       .upToNextMajor(from: "2.2.0")
     ),
     .package(
+      url: "https://github.com/vapor/leaf-provider.git",
+      .upToNextMajor(from: "1.1.0")
+    ),
+    .package(
       url: "https://github.com/vapor/mysql-provider.git",
       .upToNextMajor(from: "2.0.0")
     ),
@@ -36,6 +40,7 @@ let package = Package(
       dependencies: [
         "ConnectedDrive",
         "Jobs",
+        "LeafProvider",
         "MySQLProvider",
         "Vapor"
       ]

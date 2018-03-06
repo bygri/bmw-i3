@@ -1,4 +1,5 @@
 import Jobs
+import LeafProvider
 import Vapor
 
 public final class Provider: Vapor.Provider {
@@ -15,6 +16,8 @@ public final class Provider: Vapor.Provider {
     config.preparations.append(RawRecord.RawRecordMigration1.self)
     config.preparations.append(Record.RecordMigration1.self)
     config.preparations.append(RawRecord.RawRecordMigration2.self)
+    config.preparations.append(Record.RecordMigration2.self)
+    config.preparations.append(Record.RecordMigration3.self)
     config.addConfigurable(command: Fetch.init, name: "fetch")
     config.addConfigurable(command: Parse.init, name: "parse")
   }
@@ -22,7 +25,7 @@ public final class Provider: Vapor.Provider {
   public func boot(_ drop: Droplet) throws {
     RawRecord.database = drop.database
     Record.database = drop.database
-    let routes = Routes()
+    let routes = Routes(drop.view)
     try drop.collection(routes)
   }
 

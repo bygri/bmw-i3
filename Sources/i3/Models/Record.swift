@@ -20,13 +20,13 @@ final class Record: Model {
   let isConnected: Bool
   let isLocked: Bool
 
-  // let chargingEndResult: ConnectedDrive.ChargingEndResult
-  // let chargingEndReason: ConnectedDrive.ChargingEndReason
-  // let updateReason: ConnectedDrive.UpdateReason
+  let chargingEndResult: DynamicResponse.ChargingEndResult
+  let chargingEndReason: DynamicResponse.ChargingEndReason
+  let updateReason: DynamicResponse.UpdateReason
 
-  // let latitude: Double
-  // let longitude: Double
-  // let heading: Int
+  let latitude: Double
+  let longitude: Double
+  let heading: Int
 
   let rawRecordId: Identifier
 
@@ -37,10 +37,17 @@ final class Record: Model {
     stateOfCharge = 0
     maxStateOfCharge = 0
     batteryPercent = attributes.chargingLevelHv
+    // batteryPercent = attributes.socHVPercent // this doesnt appear to change much
     fuelPercent = attributes.fuelPercent
     isCharging = attributes.chargingStatus == .chargingActive
     isConnected = attributes.connectorStatus == .connected
     isLocked = attributes.doorLockState == .secured
+    chargingEndResult = attributes.lastChargingEndResult
+    chargingEndReason = attributes.lastChargingEndReason
+    updateReason = attributes.lastUpdateReason
+    latitude = attributes.gpsLat
+    longitude = attributes.gpsLng
+    heading = attributes.heading
   }
 
   // Fluent
@@ -57,6 +64,12 @@ final class Record: Model {
     isCharging = try row.get("isCharging")
     isConnected = try row.get("isConnected")
     isLocked = try row.get("isLocked")
+    chargingEndResult = try DynamicResponse.ChargingEndResult(rawValue: row.get("chargingEndResult"))!
+    chargingEndReason = try DynamicResponse.ChargingEndReason(rawValue: row.get("chargingEndReason"))!
+    updateReason = try DynamicResponse.UpdateReason(rawValue: row.get("updateReason"))!
+    latitude = try row.get("latitude")
+    longitude = try row.get("longitude")
+    heading = try row.get("heading")
     rawRecordId = try row.get("rawRecordId")
   }
 
@@ -71,6 +84,12 @@ final class Record: Model {
     try row.set("isCharging", isCharging)
     try row.set("isConnected", isConnected)
     try row.set("isLocked", isLocked)
+    try row.set("chargingEndResult", chargingEndResult.rawValue)
+    try row.set("chargingEndReason", chargingEndReason.rawValue)
+    try row.set("updateReason", updateReason.rawValue)
+    try row.set("latitude", latitude)
+    try row.set("longitude", longitude)
+    try row.set("heading", heading)
     try row.set("rawRecordId", rawRecordId)
     return row
   }
@@ -94,6 +113,28 @@ final class Record: Model {
     static func revert(_ database: Database) throws {
       try database.delete(Record.self)
     }
+  }
+
+  struct RecordMigration2: Preparation {
+    static func prepare(_ database: Database) throws {
+      try database.modify(Record.self) { builder in
+        builder.double("latitude")
+        builder.double("longitude")
+        builder.int("heading")
+      }
+    }
+    static func revert(_ database: Database) throws {}
+  }
+
+  struct RecordMigration3: Preparation {
+    static func prepare(_ database: Database) throws {
+      try database.modify(Record.self) { builder in
+        builder.string("chargingEndResult")
+        builder.string("chargingEndReason")
+        builder.string("updateReason")
+      }
+    }
+    static func revert(_ database: Database) throws {}
   }
 
 }
