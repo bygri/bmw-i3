@@ -49,21 +49,13 @@ final class RawRecord: Model {
         builder.id()
         builder.date("date")
         builder.bytes("data")
+        builder.int("checksum")
         builder.string("parseError", optional: true)
       }
     }
     static func revert(_ database: Database) throws {
       try database.delete(RawRecord.self)
     }
-  }
-
-  struct RawRecordMigration2: Preparation {
-    static func prepare(_ database: Database) throws {
-      try database.modify(RawRecord.self) { builder in
-        builder.int("checksum")
-      }
-    }
-    static func revert(_ database: Database) throws {}
   }
 
 }
