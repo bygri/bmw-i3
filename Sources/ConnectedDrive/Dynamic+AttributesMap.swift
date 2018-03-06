@@ -239,6 +239,7 @@ extension DynamicResponse {
   }
   public enum ChargingHVStatus: String, Codable {
     case charging = "CHARGING"
+    case finishedFullyCharged = "FINISHED_FULLY_CHARGED"
     case invalid = "INVALID"
   }
   public enum ChargingLogic: String, Codable {
@@ -250,6 +251,7 @@ extension DynamicResponse {
   }
   public enum ChargingStatus: String, Codable {
     case chargingActive = "CHARGINGACTIVE"
+    case chargingEnded = "CHARGINGENDED"
     case noCharging = "NOCHARGING"
   }
   public enum ConnectorStatus: String, Codable {
@@ -299,6 +301,7 @@ extension DynamicResponse {
     case invalid = "INVALID"
   }
   public enum UpdateReason: String, Codable {
+    case chargingDone = "CHARGINGDONE"
     case chargingStarted = "CHARGINGSTARTED"
     case doorStateChanged = "DOORSTATECHANGED"
     case predictionUpdate = "PREDICTIONUPDATE"

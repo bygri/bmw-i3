@@ -13,10 +13,7 @@ public final class Provider: Vapor.Provider {
   init() {}
 
   public func boot(_ config: Config) throws {
-    config.preparations.append(RawRecord.RawRecordMigration1.self)
-    config.preparations.append(Record.RecordMigration1.self)
-    config.preparations.append(Record.RecordMigration2.self)
-    config.preparations.append(Record.RecordMigration3.self)
+    Migrations.add(to: config)
     config.addConfigurable(command: Fetch.init, name: "fetch")
     config.addConfigurable(command: Parse.init, name: "parse")
   }

@@ -43,19 +43,4 @@ final class RawRecord: Model {
     return row
   }
 
-  struct RawRecordMigration1: Preparation {
-    static func prepare(_ database: Database) throws {
-      try database.create(RawRecord.self) { builder in
-        builder.id()
-        builder.date("date")
-        builder.bytes("data")
-        builder.int("checksum")
-        builder.string("parseError", optional: true)
-      }
-    }
-    static func revert(_ database: Database) throws {
-      try database.delete(RawRecord.self)
-    }
-  }
-
 }

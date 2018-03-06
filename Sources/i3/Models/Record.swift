@@ -94,47 +94,4 @@ final class Record: Model {
     return row
   }
 
-  struct RecordMigration1: Preparation {
-    static func prepare(_ database: Database) throws {
-      try database.create(Record.self) { builder in
-        builder.id()
-        builder.date("date")
-        builder.int("odometer")
-        builder.double("stateOfCharge")
-        builder.double("maxStateOfCharge")
-        builder.double("batteryPercent")
-        builder.int("fuelPercent")
-        builder.bool("isCharging")
-        builder.bool("isConnected")
-        builder.bool("isLocked")
-        builder.foreignId(for: RawRecord.self)
-      }
-    }
-    static func revert(_ database: Database) throws {
-      try database.delete(Record.self)
-    }
-  }
-
-  struct RecordMigration2: Preparation {
-    static func prepare(_ database: Database) throws {
-      try database.modify(Record.self) { builder in
-        builder.double("latitude")
-        builder.double("longitude")
-        builder.int("heading")
-      }
-    }
-    static func revert(_ database: Database) throws {}
-  }
-
-  struct RecordMigration3: Preparation {
-    static func prepare(_ database: Database) throws {
-      try database.modify(Record.self) { builder in
-        builder.string("chargingEndResult")
-        builder.string("chargingEndReason")
-        builder.string("updateReason")
-      }
-    }
-    static func revert(_ database: Database) throws {}
-  }
-
 }
