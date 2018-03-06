@@ -1,3 +1,4 @@
+import Jobs
 import Vapor
 
 public final class Provider: Vapor.Provider {
@@ -11,17 +12,31 @@ public final class Provider: Vapor.Provider {
   init() {}
 
   public func boot(_ config: Config) throws {
-    config.preparations.append(SourceFile.SourceFileMigration1.self)
-    config.preparations.append(Datum.DatumMigration1.self)
+    config.preparations.append(RawRecord.RawRecordMigration1.self)
+    config.preparations.append(Record.RecordMigration1.self)
+    config.preparations.append(RawRecord.RawRecordMigration2.self)
     config.addConfigurable(command: Fetch.init, name: "fetch")
     config.addConfigurable(command: Parse.init, name: "parse")
   }
 
   public func boot(_ drop: Droplet) throws {
-    SourceFile.database = drop.database
-    Datum.database = drop.database
+    RawRecord.database = drop.database
+    Record.database = drop.database
+    let routes = Routes()
+    try drop.collection(routes)
   }
 
-  public func beforeRun(_ drop: Droplet) throws {}
+  public func beforeRun(_ drop: Droplet) throws {
+    // If we are running `serve`, then start running background jobs.
+    let args = drop.config.arguments.dropFirst()
+    guard args.count == 0 || args.first == "serve" else {
+      return
+    }
+    Jobs.add(interval: .seconds(5*60)) {
+      // Run a Fetch, and then a Parse.
+      try Fetch(config: drop.config).run(arguments: [])
+      try Parse(config: drop.config).run(arguments: [])
+    }
+  }
 
 }

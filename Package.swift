@@ -16,9 +16,13 @@ let package = Package(
       url: "https://github.com/vapor/mysql-provider.git",
       .upToNextMajor(from: "2.0.0")
     ),
+    .package(
+      url: "https://github.com/BrettRToomey/Jobs.git",
+      .upToNextMajor(from: "1.1.2")
+    ),
   ],
   targets: [
-    // Models from ConnectedDrive
+    // Request and response models from ConnectedDrive
     .target(
       name: "ConnectedDrive"
     ),
@@ -31,6 +35,7 @@ let package = Package(
       name: "i3",
       dependencies: [
         "ConnectedDrive",
+        "Jobs",
         "MySQLProvider",
         "Vapor"
       ]

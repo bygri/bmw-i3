@@ -2,11 +2,13 @@ public enum OddBool: String, Codable {
   case `true` = "IS_TRUE"
 }
 
-public struct ChargingProfile: Codable {
+public struct ChargingProfileRequest {
   public static func url(for vin: String) -> String {
     return "/api/vehicle/remoteservices/chargingprofile/v1/\(vin)"
   }
+}
 
+public struct ChargingProfileResponse: Codable {
   public let pendingUpdate: Bool
   public let weekTimer: WeekTimer
   public let xmlVersion: XMLVersion

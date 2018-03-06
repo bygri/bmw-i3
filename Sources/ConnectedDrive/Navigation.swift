@@ -1,8 +1,10 @@
-public struct Navigation: Codable {
+public struct NavigationRequest {
   public static func url(for vin: String) -> String {
     return "/api/vehicle/navigation/v1/\(vin)"
   }
+}
 
+public struct NavigationResponse: Codable {
   public let auxPowerEcoPro: Double
   public let auxPowerEcoProPlus: Double
   public let auxPowerRegular: Double

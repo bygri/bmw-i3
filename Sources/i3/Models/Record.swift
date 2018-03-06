@@ -6,7 +6,7 @@ import Vapor
 /**
 Stores useful info from ConnectedDrive in a queryable form.
 */
-final class Datum: Model {
+final class Record: Model {
 
   let date: Date
   let odometer: Int
@@ -20,12 +20,18 @@ final class Datum: Model {
   let isConnected: Bool
   let isLocked: Bool
 
-  let sourceFileId: Identifier
+  // let chargingEndResult: ConnectedDrive.ChargingEndResult
+  // let chargingEndReason: ConnectedDrive.ChargingEndReason
+  // let updateReason: ConnectedDrive.UpdateReason
 
-  init(parsing sourceFile: SourceFile) throws {
-    let dynamic = try JSONDecoder().decode(Dynamic.self, from: Data(sourceFile.data))
-    let attributes = dynamic.attributesMap
-    sourceFileId = try sourceFile.assertExists()
+  // let latitude: Double
+  // let longitude: Double
+  // let heading: Int
+
+  let rawRecordId: Identifier
+
+  init(rawRecordId: Identifier, attributes: DynamicResponse.AttributesMap) throws {
+    self.rawRecordId = rawRecordId
     date = attributes.updateTime
     odometer = attributes.mileage
     stateOfCharge = 0
@@ -51,7 +57,7 @@ final class Datum: Model {
     isCharging = try row.get("isCharging")
     isConnected = try row.get("isConnected")
     isLocked = try row.get("isLocked")
-    sourceFileId = try row.get("sourceFileId")
+    rawRecordId = try row.get("rawRecordId")
   }
 
   func makeRow() throws -> Row {
@@ -65,13 +71,13 @@ final class Datum: Model {
     try row.set("isCharging", isCharging)
     try row.set("isConnected", isConnected)
     try row.set("isLocked", isLocked)
-    try row.set("sourceFileId", sourceFileId)
+    try row.set("rawRecordId", rawRecordId)
     return row
   }
 
-  struct DatumMigration1: Preparation {
+  struct RecordMigration1: Preparation {
     static func prepare(_ database: Database) throws {
-      try database.create(Datum.self) { builder in
+      try database.create(Record.self) { builder in
         builder.id()
         builder.date("date")
         builder.int("odometer")
@@ -82,11 +88,11 @@ final class Datum: Model {
         builder.bool("isCharging")
         builder.bool("isConnected")
         builder.bool("isLocked")
-        builder.foreignId(for: SourceFile.self)
+        builder.foreignId(for: RawRecord.self)
       }
     }
     static func revert(_ database: Database) throws {
-      try database.delete(Datum.self)
+      try database.delete(Record.self)
     }
   }
 

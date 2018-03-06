@@ -45,28 +45,34 @@ final class Fetch: Command, ConfigInitializable {
   }
 
   func run(arguments: [String]) throws  {
-    log.info("Fetching data from ConnectedDrive...")
+    log.info("Starting Fetch.")
     // Load token from cache, or attempt to log in.
     let token = try cache.get("token")?.string ?? login()
     // Fetch Dynamic data fom CD.
     let request = Request(
       method: .get,
-      uri: host + Dynamic.url(for: vin),
+      uri: host + DynamicRequest.url(for: vin),
       headers: ["Authorization": "Bearer \(token)"])
     let response = try client.respond(to: request)
     guard let bytes = response.body.bytes else {
       log.error("Bad response from ConnectedDrive: \(response)")
       return
     }
-    // Save the raw response in a SourceFile record
-    let record = SourceFile(data: bytes)
-    try record.save()
-    log.info("New Dynamic record saved")
+    // Save the raw response, or discard if identical to the previous record.
+    let record = RawRecord(data: bytes)
+    let lastRecord = try RawRecord.makeQuery().sort("id", .descending).first()
+    if lastRecord?.checksum == record.checksum {
+      log.info("Discarding no-change raw record.")
+    } else {
+      try record.save()
+      log.info("New raw record saved with checksum \(record.checksum).")
+    }
+    log.info("Fetch completed.")
   }
 
   // Log in, cache and return token.
   private func login() throws -> String {
-    log.info("Fetching a new authentication token from ConnectedDrive.")
+    log.info("Getting a new authentication token from ConnectedDrive.")
     let request = Request(method: .post, uri: "https://customer.bmwgroup.com/gcdm/oauth/authenticate")
     request.formURLEncoded = try [
       "client_id": "dbf0a542-ebd1-4ff0-a9a7-55172fbfce35",

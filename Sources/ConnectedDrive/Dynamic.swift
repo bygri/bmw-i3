@@ -1,9 +1,12 @@
-public struct Dynamic: Codable {
+public struct DynamicRequest {
   public static func url(for vin: String) -> String {
     // Can add an `offset` query param e.g. -660 for -11 hrs timezone shift
+    // but we don't because we want everything in UTC
     return "/api/vehicle/dynamic/v1/\(vin)"
   }
+}
 
+public struct DynamicResponse: Codable {
   public let attributesMap: AttributesMap
   public let vehicleMessages: VehicleMessages
 

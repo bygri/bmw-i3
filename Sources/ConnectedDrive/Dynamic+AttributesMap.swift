@@ -1,6 +1,6 @@
 import Foundation
 
-extension Dynamic {
+extension DynamicResponse {
   public struct AttributesMap: Codable {
     public let batterySizeMax: Int
     public let beMaxRangeElectric: Double

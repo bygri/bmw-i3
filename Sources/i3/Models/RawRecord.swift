@@ -9,15 +9,17 @@ Stores raw responses from ConnectedDrive.
 This is so that future versions of the app can retroactively re-parse responses
 as new functionality is added.
 */
-final class SourceFile: Model {
+final class RawRecord: Model {
 
   let date: Date
   let data: Bytes
+  let checksum: Int
   var parseError: String?
 
   init(data: Bytes) {
     date = Date()
     self.data = data
+    checksum = data.map { Int($0) }.reduce(0, +) & 0xff
   }
 
   // Fluent
@@ -28,6 +30,7 @@ final class SourceFile: Model {
     date = try row.get("date")
     let dataBlob: Blob = try row.get("data")
     data = dataBlob.bytes
+    checksum = try row.get("checksum")
     parseError = try row.get("parseError")
   }
 
@@ -35,13 +38,14 @@ final class SourceFile: Model {
     var row = Row()
     try row.set("date", date)
     try row.set("data", Blob(bytes: data))
+    try row.set("checksum", checksum)
     try row.set("parseError", parseError)
     return row
   }
 
-  struct SourceFileMigration1: Preparation {
+  struct RawRecordMigration1: Preparation {
     static func prepare(_ database: Database) throws {
-      try database.create(SourceFile.self) { builder in
+      try database.create(RawRecord.self) { builder in
         builder.id()
         builder.date("date")
         builder.bytes("data")
@@ -49,8 +53,17 @@ final class SourceFile: Model {
       }
     }
     static func revert(_ database: Database) throws {
-      try database.delete(SourceFile.self)
+      try database.delete(RawRecord.self)
     }
+  }
+
+  struct RawRecordMigration2: Preparation {
+    static func prepare(_ database: Database) throws {
+      try database.modify(RawRecord.self) { builder in
+        builder.int("checksum")
+      }
+    }
+    static func revert(_ database: Database) throws {}
   }
 
 }
