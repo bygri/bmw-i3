@@ -34,11 +34,17 @@ public final class Provider: Vapor.Provider {
     guard args.count == 0 || args.first == "serve" else {
       return
     }
-    Jobs.add(interval: .seconds(5*60)) {
-      // Run a Fetch, and then a Parse.
-      try Fetch(config: drop.config).run(arguments: [])
-      try Parse(config: drop.config).run(arguments: [])
-    }
+    Jobs.add(
+      interval: .seconds(5*60),
+      action: {
+        // Run a Fetch, and then a Parse.
+        try Fetch(config: drop.config).run(arguments: [])
+        try Parse(config: drop.config).run(arguments: [])
+      },
+      onError: { error in
+        return .retry(after: .seconds(5*60))
+      }
+    )
   }
 
 }

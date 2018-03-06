@@ -231,6 +231,7 @@ extension DynamicResponse {
   public enum ChargingEndReason: String, Codable {
     case unknown = "UNKNOWN"
     case chargingGoalReached = "CHARGING_GOAL_REACHED"
+    case connectorRemoved = "CONNECTOR_REMOVED"
   }
   public enum ChargingEndResult: String, Codable {
     case unknown = "UNKNOWN"
