@@ -1,4 +1,6 @@
-extension Dynamic {
+import Foundation
+
+extension DynamicResponse {
   public struct AttributesMap: Codable {
     public let batterySizeMax: Int
     public let beMaxRangeElectric: Double
@@ -41,7 +43,7 @@ extension Dynamic {
     public let lastChargingEndResult: ChargingEndResult
     public let lastUpdateReason: UpdateReason
     public let lightsParking: LightsParking
-    public let lscTrigger: LSCTrigger
+    public let lscTrigger: UpdateReason
     public let mileage: Int
     public let prognosisWhileChargingStatus: PrognosisWhileCharging
     public let remainingFuel: Int
@@ -60,7 +62,7 @@ extension Dynamic {
     public let unitOfElectricConsumption: String
     public let unitOfEnergy: String
     public let unitOfLength: String
-    public let updateTime: String
+    public let updateTime: Date
     public let updateTimeConverted: String
     public let updateTimeConvertedDate: String
     public let updateTimeConvertedTime: String
@@ -187,7 +189,7 @@ extension Dynamic {
       lastChargingEndResult = try values.decode(ChargingEndResult.self, forKey: .lastChargingEndResult)
       lastUpdateReason = try values.decode(UpdateReason.self, forKey: .lastUpdateReason)
       lightsParking = try values.decode(LightsParking.self, forKey: .lightsParking)
-      lscTrigger = try values.decode(LSCTrigger.self, forKey: .lscTrigger)
+      lscTrigger = try values.decode(UpdateReason.self, forKey: .lscTrigger)
       mileage = try unwrapInt(from: values.decode(String.self, forKey: .mileage))
       prognosisWhileChargingStatus = try values.decode(PrognosisWhileCharging.self, forKey: .prognosisWhileChargingStatus)
       remainingFuel = try unwrapInt(from: values.decode(String.self, forKey: .remainingFuel))
@@ -206,7 +208,8 @@ extension Dynamic {
       unitOfElectricConsumption = try values.decode(String.self, forKey: .unitOfElectricConsumption)
       unitOfEnergy = try values.decode(String.self, forKey: .unitOfEnergy)
       unitOfLength = try values.decode(String.self, forKey: .unitOfLength)
-      updateTime = try values.decode(String.self, forKey: .updateTime)
+      /* 04.03.2018 20:49:59 UTC */
+      updateTime = try unwrapDate(from: values.decode(String.self, forKey: .updateTime), format: "dd.MM.yyyy HH:mm:ss zzz")
       updateTimeConverted = try values.decode(String.self, forKey: .updateTimeConverted)
       updateTimeConvertedDate = try values.decode(String.self, forKey: .updateTimeConvertedDate)
       updateTimeConvertedTime = try values.decode(String.self, forKey: .updateTimeConvertedTime)
@@ -228,6 +231,7 @@ extension Dynamic {
   public enum ChargingEndReason: String, Codable {
     case unknown = "UNKNOWN"
     case chargingGoalReached = "CHARGING_GOAL_REACHED"
+    case connectorRemoved = "CONNECTOR_REMOVED"
   }
   public enum ChargingEndResult: String, Codable {
     case unknown = "UNKNOWN"
@@ -235,6 +239,7 @@ extension Dynamic {
   }
   public enum ChargingHVStatus: String, Codable {
     case charging = "CHARGING"
+    case finishedFullyCharged = "FINISHED_FULLY_CHARGED"
     case invalid = "INVALID"
   }
   public enum ChargingLogic: String, Codable {
@@ -246,6 +251,7 @@ extension Dynamic {
   }
   public enum ChargingStatus: String, Codable {
     case chargingActive = "CHARGINGACTIVE"
+    case chargingEnded = "CHARGINGENDED"
     case noCharging = "NOCHARGING"
   }
   public enum ConnectorStatus: String, Codable {
@@ -269,10 +275,6 @@ extension Dynamic {
   public enum LightsParking: String, Codable {
     case off = "OFF"
   }
-  public enum LSCTrigger: String, Codable {
-    case chargingStarted = "CHARGINGSTARTED"
-    case vehicleShutdownSecured = "VEHCSHUTDOWN_SECURED"
-  }
   public enum OpenCloseState: String, Codable {
     case closed = "CLOSED"
   }
@@ -282,6 +284,7 @@ extension Dynamic {
   }
   public enum ShdStatusUnified: String, Codable {
     case closed = "CLOSED"
+    case invalid = "INVALID"
   }
   public enum SingleImmediateCharging: String, Codable {
     case isUnused
@@ -295,9 +298,13 @@ extension Dynamic {
   }
   public enum WindowStatus: String, Codable {
     case closed = "CLOSED"
+    case invalid = "INVALID"
   }
   public enum UpdateReason: String, Codable {
+    case chargingDone = "CHARGINGDONE"
     case chargingStarted = "CHARGINGSTARTED"
+    case doorStateChanged = "DOORSTATECHANGED"
+    case predictionUpdate = "PREDICTIONUPDATE"
     case vehicleShutdownSecured = "VEHCSHUTDOWN_SECURED"
   }
 }
@@ -311,6 +318,15 @@ private func unwrapInt(from string: String) throws -> Int {
 
 private func unwrapDouble(from string: String) throws -> Double {
   guard let unwrapped = Double(string) else {
+    throw ConnectedDriveError.invalidConversion
+  }
+  return unwrapped
+}
+
+private let dateFormatter = DateFormatter()
+private func unwrapDate(from string: String, format: String) throws -> Date {
+  dateFormatter.dateFormat =  format
+  guard let unwrapped = dateFormatter.date(from: string) else {
     throw ConnectedDriveError.invalidConversion
   }
   return unwrapped

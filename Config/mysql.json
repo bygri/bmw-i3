@@ -1,0 +1,8 @@
+{
+  "hostname": "db",
+  "user": "i3",
+  "password": "i3",
+  "database": "i3",
+  "port": "3306",
+  "encoding": "utf8"
+}

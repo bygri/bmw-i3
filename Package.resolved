@@ -101,12 +101,39 @@
         }
       },
       {
+        "package": "Jobs",
+        "repositoryURL": "https://github.com/BrettRToomey/Jobs.git",
+        "state": {
+          "branch": null,
+          "revision": "2051cc49b64692534225ea9d347051f64ac682ee",
+          "version": "1.1.2"
+        }
+      },
+      {
         "package": "JSON",
         "repositoryURL": "https://github.com/vapor/json.git",
         "state": {
           "branch": null,
           "revision": "6c7ce40d30b322d45cc49a8f1d742609d3228eb7",
           "version": "2.2.2"
+        }
+      },
+      {
+        "package": "Leaf",
+        "repositoryURL": "https://github.com/vapor/leaf.git",
+        "state": {
+          "branch": null,
+          "revision": "84d8af322158b71284c0ebd513f1c18474837d40",
+          "version": "2.0.2"
+        }
+      },
+      {
+        "package": "LeafProvider",
+        "repositoryURL": "https://github.com/vapor/leaf-provider.git",
+        "state": {
+          "branch": null,
+          "revision": "0cbeb0db6fc955c2cf12a0293c1e54f16cbb1ca3",
+          "version": "1.1.0"
         }
       },
       {

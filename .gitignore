@@ -1,1 +1,3 @@
 .build
+mysql_data
+Config/secrets

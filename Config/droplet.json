@@ -1,0 +1,10 @@
+{
+  "console": "terminal",
+  "log": "console",
+  "commands": [
+    "fetch",
+    "parse"
+  ],
+  "cache": "fluent",
+  "view": "leaf"
+}
