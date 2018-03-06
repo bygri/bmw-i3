@@ -2,7 +2,8 @@
   "console": "terminal",
   "log": "console",
   "commands": [
-    "fetch"
+    "fetch",
+    "parse"
   ],
   "cache": "fluent"
 }

@@ -62,15 +62,6 @@ final class Fetch: Command, ConfigInitializable {
     let record = SourceFile(data: bytes)
     try record.save()
     log.info("New Dynamic record saved")
-    // Attempt to parse the response into a usable Datum record
-    do {
-      try Datum(parsing: record).save()
-    } catch {
-      let errorMessage = String(describing: error)
-      log.error("Error parsing Dynamic data: \(errorMessage)")
-      record.parseError = errorMessage
-      try record.save()
-    }
   }
 
   // Log in, cache and return token.

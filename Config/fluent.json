@@ -1,5 +1,5 @@
 {
   "driver": "mysql",
   "keyNamingConvention": "camelCase",
-  "log": true
+  "log": false
 }

@@ -43,7 +43,7 @@ extension Dynamic {
     public let lastChargingEndResult: ChargingEndResult
     public let lastUpdateReason: UpdateReason
     public let lightsParking: LightsParking
-    public let lscTrigger: LSCTrigger
+    public let lscTrigger: UpdateReason
     public let mileage: Int
     public let prognosisWhileChargingStatus: PrognosisWhileCharging
     public let remainingFuel: Int
@@ -189,7 +189,7 @@ extension Dynamic {
       lastChargingEndResult = try values.decode(ChargingEndResult.self, forKey: .lastChargingEndResult)
       lastUpdateReason = try values.decode(UpdateReason.self, forKey: .lastUpdateReason)
       lightsParking = try values.decode(LightsParking.self, forKey: .lightsParking)
-      lscTrigger = try values.decode(LSCTrigger.self, forKey: .lscTrigger)
+      lscTrigger = try values.decode(UpdateReason.self, forKey: .lscTrigger)
       mileage = try unwrapInt(from: values.decode(String.self, forKey: .mileage))
       prognosisWhileChargingStatus = try values.decode(PrognosisWhileCharging.self, forKey: .prognosisWhileChargingStatus)
       remainingFuel = try unwrapInt(from: values.decode(String.self, forKey: .remainingFuel))
@@ -272,11 +272,6 @@ extension Dynamic {
   public enum LightsParking: String, Codable {
     case off = "OFF"
   }
-  public enum LSCTrigger: String, Codable {
-    case chargingStarted = "CHARGINGSTARTED"
-    case doorStateChanged = "DOORSTATECHANGED"
-    case vehicleShutdownSecured = "VEHCSHUTDOWN_SECURED"
-  }
   public enum OpenCloseState: String, Codable {
     case closed = "CLOSED"
   }
@@ -286,6 +281,7 @@ extension Dynamic {
   }
   public enum ShdStatusUnified: String, Codable {
     case closed = "CLOSED"
+    case invalid = "INVALID"
   }
   public enum SingleImmediateCharging: String, Codable {
     case isUnused
@@ -299,10 +295,12 @@ extension Dynamic {
   }
   public enum WindowStatus: String, Codable {
     case closed = "CLOSED"
+    case invalid = "INVALID"
   }
   public enum UpdateReason: String, Codable {
     case chargingStarted = "CHARGINGSTARTED"
     case doorStateChanged = "DOORSTATECHANGED"
+    case predictionUpdate = "PREDICTIONUPDATE"
     case vehicleShutdownSecured = "VEHCSHUTDOWN_SECURED"
   }
 }

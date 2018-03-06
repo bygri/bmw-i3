@@ -14,6 +14,7 @@ public final class Provider: Vapor.Provider {
     config.preparations.append(SourceFile.SourceFileMigration1.self)
     config.preparations.append(Datum.DatumMigration1.self)
     config.addConfigurable(command: Fetch.init, name: "fetch")
+    config.addConfigurable(command: Parse.init, name: "parse")
   }
 
   public func boot(_ drop: Droplet) throws {

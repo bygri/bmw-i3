@@ -26,14 +26,15 @@ final class SourceFile: Model {
 
   init(row: Row) throws {
     date = try row.get("date")
-    data = try row.get("data")
+    let dataBlob: Blob = try row.get("data")
+    data = dataBlob.bytes
     parseError = try row.get("parseError")
   }
 
   func makeRow() throws -> Row {
     var row = Row()
     try row.set("date", date)
-    try row.set("data", data)
+    try row.set("data", Blob(bytes: data))
     try row.set("parseError", parseError)
     return row
   }
