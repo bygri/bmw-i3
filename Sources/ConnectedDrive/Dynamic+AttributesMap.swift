@@ -1,3 +1,5 @@
+import Foundation
+
 extension Dynamic {
   public struct AttributesMap: Codable {
     public let batterySizeMax: Int
@@ -60,7 +62,7 @@ extension Dynamic {
     public let unitOfElectricConsumption: String
     public let unitOfEnergy: String
     public let unitOfLength: String
-    public let updateTime: String
+    public let updateTime: Date
     public let updateTimeConverted: String
     public let updateTimeConvertedDate: String
     public let updateTimeConvertedTime: String
@@ -206,7 +208,8 @@ extension Dynamic {
       unitOfElectricConsumption = try values.decode(String.self, forKey: .unitOfElectricConsumption)
       unitOfEnergy = try values.decode(String.self, forKey: .unitOfEnergy)
       unitOfLength = try values.decode(String.self, forKey: .unitOfLength)
-      updateTime = try values.decode(String.self, forKey: .updateTime)
+      /* 04.03.2018 20:49:59 UTC */
+      updateTime = try unwrapDate(from: values.decode(String.self, forKey: .updateTime), format: "dd.MM.yyyy HH:mm:ss zzz")
       updateTimeConverted = try values.decode(String.self, forKey: .updateTimeConverted)
       updateTimeConvertedDate = try values.decode(String.self, forKey: .updateTimeConvertedDate)
       updateTimeConvertedTime = try values.decode(String.self, forKey: .updateTimeConvertedTime)
@@ -271,6 +274,7 @@ extension Dynamic {
   }
   public enum LSCTrigger: String, Codable {
     case chargingStarted = "CHARGINGSTARTED"
+    case doorStateChanged = "DOORSTATECHANGED"
     case vehicleShutdownSecured = "VEHCSHUTDOWN_SECURED"
   }
   public enum OpenCloseState: String, Codable {
@@ -298,6 +302,7 @@ extension Dynamic {
   }
   public enum UpdateReason: String, Codable {
     case chargingStarted = "CHARGINGSTARTED"
+    case doorStateChanged = "DOORSTATECHANGED"
     case vehicleShutdownSecured = "VEHCSHUTDOWN_SECURED"
   }
 }
@@ -311,6 +316,15 @@ private func unwrapInt(from string: String) throws -> Int {
 
 private func unwrapDouble(from string: String) throws -> Double {
   guard let unwrapped = Double(string) else {
+    throw ConnectedDriveError.invalidConversion
+  }
+  return unwrapped
+}
+
+private let dateFormatter = DateFormatter()
+private func unwrapDate(from string: String, format: String) throws -> Date {
+  dateFormatter.dateFormat =  format
+  guard let unwrapped = dateFormatter.date(from: string) else {
     throw ConnectedDriveError.invalidConversion
   }
   return unwrapped

@@ -11,7 +11,9 @@ final class Fetch: Command, ConfigInitializable {
   let cache: CacheProtocol
   let client: ClientFactoryProtocol
   let console: ConsoleProtocol
+  let log: LogProtocol
 
+  let host: String
   let username: String
   let password: String
   let vin: String
@@ -20,8 +22,12 @@ final class Fetch: Command, ConfigInitializable {
     cache = try config.resolveCache()
     client = try config.resolveClient()
     console = try config.resolveConsole()
+    log = try config.resolveLog()
     guard let cfg = config["connecteddrive"] else {
       throw ConfigError.missingFile("connecteddrive")
+    }
+    guard let host = cfg["host"]?.string else {
+      throw ConfigError.missing(key: ["host"], file: "connecteddrive", desiredType: String.self)
     }
     guard let username = cfg["username"]?.string else {
       throw ConfigError.missing(key: ["username"], file: "connecteddrive", desiredType: String.self)
@@ -32,20 +38,44 @@ final class Fetch: Command, ConfigInitializable {
     guard let vin = cfg["vin"]?.string else {
       throw ConfigError.missing(key: ["vin"], file: "connecteddrive", desiredType: String.self)
     }
+    self.host = host
     self.username = username
     self.password = password
     self.vin = vin
   }
 
   func run(arguments: [String]) throws  {
-    // Log in to ConnectedDrive, then fetch Dynamic.
-    // Cache login details for next time.
+    log.info("Fetching data from ConnectedDrive...")
+    // Load token from cache, or attempt to log in.
     let token = try cache.get("token")?.string ?? login()
-    console.print("Token: \(token)")
+    // Fetch Dynamic data fom CD.
+    let request = Request(
+      method: .get,
+      uri: host + Dynamic.url(for: vin),
+      headers: ["Authorization": "Bearer \(token)"])
+    let response = try client.respond(to: request)
+    guard let bytes = response.body.bytes else {
+      log.error("Bad response from ConnectedDrive: \(response)")
+      return
+    }
+    // Save the raw response in a SourceFile record
+    let record = SourceFile(data: bytes)
+    try record.save()
+    log.info("New Dynamic record saved")
+    // Attempt to parse the response into a usable Datum record
+    do {
+      try Datum(parsing: record).save()
+    } catch {
+      let errorMessage = String(describing: error)
+      log.error("Error parsing Dynamic data: \(errorMessage)")
+      record.parseError = errorMessage
+      try record.save()
+    }
   }
 
   // Log in, cache and return token.
   private func login() throws -> String {
+    log.info("Fetching a new authentication token from ConnectedDrive.")
     let request = Request(method: .post, uri: "https://customer.bmwgroup.com/gcdm/oauth/authenticate")
     request.formURLEncoded = try [
       "client_id": "dbf0a542-ebd1-4ff0-a9a7-55172fbfce35",
@@ -60,8 +90,7 @@ final class Fetch: Command, ConfigInitializable {
       let locationHeader = response.headers[HeaderKey.location],
       let fragment = try URI(locationHeader).fragment
     else {
-      // state = .error("The ConnectedDrive server returned an unexpected response.")
-      print("Auth error. Response: \(response)")
+      log.error("The ConnectedDrive server returned an unexpected response: \(response)")
       throw Abort.serverError
     }
     // The fragment should be a URL-encoded string with access_token, token_type, and expires_in
@@ -79,8 +108,7 @@ final class Fetch: Command, ConfigInitializable {
       let expiresInString = result["expires_in"],
       let expiresIn = Double(expiresInString)
     else {
-      // state = .error("No access token was returned.")
-      print("Auth error. Fragment \(fragment).")
+      log.error("The ConnectedDrive server returned an unexpected response. Fragment: \(fragment)")
       throw Abort.serverError
     }
     try cache.set("token", tokenString, expiration: Date() + expiresIn)

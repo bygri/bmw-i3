@@ -31,6 +31,7 @@ let package = Package(
       name: "i3",
       dependencies: [
         "ConnectedDrive",
+        "MySQLProvider",
         "Vapor"
       ]
     ),

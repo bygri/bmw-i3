@@ -11,11 +11,14 @@ public final class Provider: Vapor.Provider {
   init() {}
 
   public func boot(_ config: Config) throws {
-    config.preparations.append(Datum.Migration1.self)
+    config.preparations.append(SourceFile.SourceFileMigration1.self)
+    config.preparations.append(Datum.DatumMigration1.self)
     config.addConfigurable(command: Fetch.init, name: "fetch")
   }
 
   public func boot(_ drop: Droplet) throws {
+    SourceFile.database = drop.database
+    Datum.database = drop.database
   }
 
   public func beforeRun(_ drop: Droplet) throws {}

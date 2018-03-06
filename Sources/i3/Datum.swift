@@ -3,6 +3,9 @@ import FluentProvider
 import Foundation
 import Vapor
 
+/**
+Stores useful info from ConnectedDrive in a queryable form.
+*/
 final class Datum: Model {
 
   let date: Date
@@ -17,10 +20,13 @@ final class Datum: Model {
   let isConnected: Bool
   let isLocked: Bool
 
-  let sourceFile: Bytes
+  let sourceFileId: Identifier
 
-  init(_ attributes: Dynamic.AttributesMap) throws {
-    date = Date()
+  init(parsing sourceFile: SourceFile) throws {
+    let dynamic = try JSONDecoder().decode(Dynamic.self, from: Data(sourceFile.data))
+    let attributes = dynamic.attributesMap
+    sourceFileId = try sourceFile.assertExists()
+    date = attributes.updateTime
     odometer = attributes.mileage
     stateOfCharge = 0
     maxStateOfCharge = 0
@@ -29,7 +35,6 @@ final class Datum: Model {
     isCharging = attributes.chargingStatus == .chargingActive
     isConnected = attributes.connectorStatus == .connected
     isLocked = attributes.doorLockState == .secured
-    sourceFile = try JSONEncoder().encode(attributes).makeBytes()
   }
 
   // Fluent
@@ -46,7 +51,7 @@ final class Datum: Model {
     isCharging = try row.get("isCharging")
     isConnected = try row.get("isConnected")
     isLocked = try row.get("isLocked")
-    sourceFile = try row.get("sourceFile")
+    sourceFileId = try row.get("sourceFileId")
   }
 
   func makeRow() throws -> Row {
@@ -60,15 +65,11 @@ final class Datum: Model {
     try row.set("isCharging", isCharging)
     try row.set("isConnected", isConnected)
     try row.set("isLocked", isLocked)
-    try row.set("sourceFile", sourceFile)
+    try row.set("sourceFileId", sourceFileId)
     return row
   }
 
-}
-
-extension Datum {
-
-  struct Migration1: Preparation {
+  struct DatumMigration1: Preparation {
     static func prepare(_ database: Database) throws {
       try database.create(Datum.self) { builder in
         builder.id()
@@ -81,7 +82,7 @@ extension Datum {
         builder.bool("isCharging")
         builder.bool("isConnected")
         builder.bool("isLocked")
-        builder.bytes("soureFile")
+        builder.foreignId(for: SourceFile.self)
       }
     }
     static func revert(_ database: Database) throws {
