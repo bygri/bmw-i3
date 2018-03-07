@@ -30,6 +30,10 @@ final class Record: Model {
 
   let rawRecordId: Identifier
 
+  var rawRecord: Parent<Record, RawRecord> {
+    return parent(id: rawRecordId)
+  }
+
   init(rawRecordId: Identifier, attributes: DynamicResponse.AttributesMap) throws {
     self.rawRecordId = rawRecordId
     date = attributes.updateTime

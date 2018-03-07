@@ -48,7 +48,9 @@ final class Routes: RouteCollection {
 
     builder.get("records", Record.parameter) { req in
       let record = try req.parameters.next(Record.self)
-      // let rawRecord = record.rawRecord.get()
+      guard let rawRecord = try record.rawRecord.get() else {
+        throw Abort.notFound
+      }
       let dateFormatter = DateFormatter()
       dateFormatter.timeZone = self.timezone
       dateFormatter.dateStyle = .short
@@ -68,6 +70,7 @@ final class Routes: RouteCollection {
       try ctx.set("record.chargingEndResult", record.chargingEndResult.rawValue)
       try ctx.set("record.chargingEndReason", record.chargingEndReason.rawValue)
       try ctx.set("record.updateReason", record.updateReason.rawValue)
+      try ctx.set("rawRecord", rawRecord.data.makeString())
       return try self.view.make("Record", ctx)
     }
   }
