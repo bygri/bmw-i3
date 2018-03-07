@@ -1,26 +1,34 @@
+import Foundation
 import HTTP
 import JSON
 import Vapor
 
 final class Routes: RouteCollection {
   let view: ViewRenderer
+  let timezone: TimeZone
 
-  init(_ view: ViewRenderer) {
+  init(_ view: ViewRenderer, _ timezone: TimeZone) {
     self.view = view
+    self.timezone = timezone
   }
 
   func build(_ builder: RouteBuilder) throws {
-    // Index: redirect to records
+    // Status page
     builder.get() { req in
-      return Response(redirect: "/records")
+      return try self.view.make("Status")
     }
 
     // Records index: show all records
     builder.get("records") { req in
+      let dateFormatter = DateFormatter()
+      dateFormatter.timeZone = self.timezone
+      dateFormatter.dateStyle = .short
+      dateFormatter.timeStyle = .short
       var ctx = Node([:])
       try ctx.set("records", Record.makeQuery().all().map { record in
         var node = Node([:])
-        try node.set("date", record.date)
+        try node.set("id", record.id)
+        try node.set("date", dateFormatter.string(from: record.date))
         try node.set("odometer", record.odometer)
         try node.set("batteryPercent", record.batteryPercent)
         try node.set("fuelPercent", record.fuelPercent)
@@ -35,20 +43,32 @@ final class Routes: RouteCollection {
         try node.set("updateReason", record.updateReason.rawValue)
         return node
       })
-      return try self.view.make("Records", ctx)
+      return try self.view.make("RecordIndex", ctx)
     }
 
     builder.get("records", Record.parameter) { req in
       let record = try req.parameters.next(Record.self)
-      var json = JSON()
-      try json.set("date", record.date)
-      try json.set("odometer", record.odometer)
-      try json.set("batteryPercent", record.batteryPercent)
-      try json.set("fuelPercent", record.fuelPercent)
-      try json.set("isCharging", record.isCharging)
-      try json.set("isConnected", record.isConnected)
-      try json.set("isLocked", record.isLocked)
-      return json
+      // let rawRecord = record.rawRecord.get()
+      let dateFormatter = DateFormatter()
+      dateFormatter.timeZone = self.timezone
+      dateFormatter.dateStyle = .short
+      dateFormatter.timeStyle = .short
+      var ctx = Node([:])
+      try ctx.set("record.id", record.id)
+      try ctx.set("record.date", dateFormatter.string(from: record.date))
+      try ctx.set("record.odometer", record.odometer)
+      try ctx.set("record.batteryPercent", record.batteryPercent)
+      try ctx.set("record.fuelPercent", record.fuelPercent)
+      try ctx.set("record.isCharging", record.isCharging)
+      try ctx.set("record.isConnected", record.isConnected)
+      try ctx.set("record.isLocked", record.isLocked)
+      try ctx.set("record.latitude", record.latitude)
+      try ctx.set("record.longitude", record.longitude)
+      try ctx.set("record.heading", record.heading)
+      try ctx.set("record.chargingEndResult", record.chargingEndResult.rawValue)
+      try ctx.set("record.chargingEndReason", record.chargingEndReason.rawValue)
+      try ctx.set("record.updateReason", record.updateReason.rawValue)
+      return try self.view.make("Record", ctx)
     }
   }
 

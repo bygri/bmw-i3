@@ -5,6 +5,10 @@ import Foundation
 import HTTP
 import Vapor
 
+/**
+Downloads the latest dynamic.json file from ConnectedDrive, checks that it contains new data,
+and if so, stores it as a RawRecord.
+*/
 final class Fetch: Command, ConfigInitializable {
   let id = "fetch"
   let help = ["Fetches ConnectedDrive info."]

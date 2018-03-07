@@ -1,0 +1,7 @@
+#extend("Base")
+
+#export("title") {Status}
+
+#export("content") {
+  Home
+}

@@ -3,6 +3,12 @@ import Console
 import Foundation
 import Vapor
 
+/**
+Checks for new RawRecords and attempts to parse them into sanitised Record objects.
+If they cannot be parsed, their `parseError` property is set.
+
+Every time this command is run, it tries to re-parse previously invalid raw records.
+*/
 final class Parse: Command, ConfigInitializable {
   let id = "parse"
   let help = ["Parses ConnectedDrive info. Add argument `reset` to re-parse all records."]

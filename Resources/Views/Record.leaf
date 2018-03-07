@@ -1,45 +1,37 @@
 #extend("Base")
 
-#export("title") {Records}
+#export("title") {Record #(record.id)}
 
 #export("content") {
-  <h1>All records</h1>
+  <h1>#(record.date)</h1>
   <table class='table table-sm'>
     <thead>
       <tr>
-        <th>ID</th>
         <th>Date</th>
         <th>Odometer</th>
         <th>Battery</th>
         <th>Fuel</th>
         <th>Charging</th>
-        <th>Connected</th>
         <th>Locked</th>
         <th>Latitude</th>
         <th>Longitude</th>
         <th>Heading</th>
-        <th>chargingEndResult</th>
-        <th>chargingEndReason</th>
-        <th>updateReason</th>
       </tr>
     </thead>
     <tbody>
       #loop(records, "record") {
       <tr>
-        <th>#(record.id)</th>
-        <td>#(record.date)</td>
+        <td>
+          <a href='/records/#(record.id)'>#(record.date)</a>
+        </td>
         <td>#(record.odometer)</td>
         <td>#(record.batteryPercent)%</td>
         <td>#(record.fuelPercent)%</td>
         <td>#(record.isCharging)</td>
-        <td>#(record.isConnected)</td>
         <td>#(record.isLocked)</td>
         <td>#(record.latitude)</td>
         <td>#(record.longitude)</td>
         <td>#(record.heading)</td>
-        <td>#(record.chargingEndResult)</td>
-        <td>#(record.chargingEndReason)</td>
-        <td>#(record.updateReason)</td>
       </tr>
       }
     </tbody>

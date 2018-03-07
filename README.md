@@ -63,7 +63,8 @@ with the following content:
   "host": "https://www.bmw-connecteddrive.com",
   "username": "YOUR_EMAIL",
   "password": "YOUR_PASSWORD",
-  "vin": "YOUR_FULL_VIN"
+  "vin": "YOUR_FULL_VIN",
+  "timezone": "Country/City"
 }
 ```
 

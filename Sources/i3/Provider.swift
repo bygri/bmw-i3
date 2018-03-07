@@ -1,3 +1,4 @@
+import Foundation
 import Jobs
 import LeafProvider
 import Vapor
@@ -21,7 +22,17 @@ public final class Provider: Vapor.Provider {
   public func boot(_ drop: Droplet) throws {
     RawRecord.database = drop.database
     Record.database = drop.database
-    let routes = Routes(drop.view)
+    guard let cfg = drop.config["connecteddrive"] else {
+      throw ConfigError.missingFile("connecteddrive")
+    }
+    guard let timezoneName = cfg["timezone"]?.string else {
+      throw ConfigError.missing(key: ["timezone"], file: "connecteddrive", desiredType: String.self)
+    }
+    guard let timezone = TimeZone(identifier: timezoneName) else {
+      drop.log.error("Bad timezone \(timezoneName) provided.")
+      fatalError()
+    }
+    let routes = Routes(drop.view, timezone)
     try drop.collection(routes)
   }
 
