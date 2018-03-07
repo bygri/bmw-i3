@@ -1,8 +1,8 @@
 # BMW i3 controller
 
-**Very much a work in progress**
+**Very much a work in progress.**
 
-The i3 is a cool car, and the app's OK. But we can do better.
+The i3 is a cool car, and the app's not bad. But we can do better.
 
 # Design goals
 
@@ -35,5 +35,59 @@ re-parse and analyse historical information.
 
 # Installation and usage
 
+**NB: At the moment, this service is only of interest to developers. More useful features to come.**
+
 You have to run this on your own machine. I don't want your BMW credentials.
 
+When the server is running, it will fetch and store data from ConnectedData every five minutes.
+You can access a basic interface at http://localhost:8080 to see what it's saved so far.
+
+## The Docker way
+
+First, [get Docker](https://www.docker.com/community-edition). Then, from the root folder
+of this project, run:
+
+```bash
+docker-compose up -d --build
+```
+
+After that, find out the container ID of `bmwi3_web` using `docker ps` and `docker attach [CID]`
+to get to the `bash` prompt.
+
+You'll need to create a configuration file with your BMW ConnectedDrive credentials. Make a new
+file named  `Config/secrets/connecteddrive.json` (creating the `secrets` folder along the way)
+with the following content:
+
+```json
+{
+  "host": "https://www.bmw-connecteddrive.com",
+  "username": "YOUR_EMAIL",
+  "password": "YOUR_PASSWORD",
+  "vin": "YOUR_FULL_VIN"
+}
+```
+
+Now start the server with:
+
+```bash
+swift run
+```
+
+To stop it again, open a new terminal window and run `docker-compose down`.
+
+## The non-Docker way
+
+It's harder.
+
+# Suggestions, contributions, improvements
+
+I'm very interested in taking suggestions from the community. If there's a feature you'd like
+added, please create a [GitHub issue](https://github.com/bygri/bmw-i3/issues/new) for it.
+
+If you are running the server, and see red error text appear, that probably means ConnectedDrive
+has sent a response I haven't seen yet. Please copy and paste the message into a GitHub issue
+so I can account for it.
+
+## BMW employees
+
+Please don't lock me out.
