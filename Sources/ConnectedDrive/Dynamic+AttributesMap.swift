@@ -259,6 +259,7 @@ extension DynamicResponse {
     case disconnected = "DISCONNECTED"
   }
   public enum DoorLockState: String, Codable {
+    case locked = "LOCKED"
     case secured = "SECURED"
     case unlocked = "UNLOCKED"
     case selectiveLocked = "SELECTIVELOCKED"
@@ -305,6 +306,7 @@ extension DynamicResponse {
     case chargingStarted = "CHARGINGSTARTED"
     case doorStateChanged = "DOORSTATECHANGED"
     case predictionUpdate = "PREDICTIONUPDATE"
+    case vehicleSecured = "VEHICLE_SECURED"
     case vehicleShutdownSecured = "VEHCSHUTDOWN_SECURED"
   }
 }

@@ -19,4 +19,6 @@ services:
       - MYSQL_USER=i3
       - MYSQL_PASSWORD=i3
     volumes:
-      - ./mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
+volumes:
+  mysql_data:
