@@ -232,6 +232,7 @@ extension DynamicResponse {
     case unknown = "UNKNOWN"
     case chargingGoalReached = "CHARGING_GOAL_REACHED"
     case connectorRemoved = "CONNECTOR_REMOVED"
+    case endRequestedByDriver = "END_REQUESTED_BY_DRIVER"
   }
   public enum ChargingEndResult: String, Codable {
     case unknown = "UNKNOWN"
@@ -266,6 +267,7 @@ extension DynamicResponse {
   }
   public enum DoorStatus: String, Codable {
     case closed = "CLOSED"
+    case open = "OPEN"
   }
   public enum HeadUnit: String, Codable {
     case nbt = "NBT"
@@ -299,6 +301,7 @@ extension DynamicResponse {
   }
   public enum WindowStatus: String, Codable {
     case closed = "CLOSED"
+    case intermediate = "INTERMEDIATE"
     case invalid = "INVALID"
   }
   public enum UpdateReason: String, Codable {
@@ -306,6 +309,7 @@ extension DynamicResponse {
     case chargingStarted = "CHARGINGSTARTED"
     case doorStateChanged = "DOORSTATECHANGED"
     case predictionUpdate = "PREDICTIONUPDATE"
+    case vehicleMoving = "VEHICLE_MOVING"
     case vehicleSecured = "VEHICLE_SECURED"
     case vehicleShutdownSecured = "VEHCSHUTDOWN_SECURED"
   }
