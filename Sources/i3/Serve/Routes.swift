@@ -33,6 +33,9 @@ final class Routes: RouteCollection {
         try node.set("batteryPercent", record.batteryPercent)
         try node.set("fuelPercent", record.fuelPercent)
         try node.set("isCharging", record.isCharging)
+        if let estimatedChargeCompletionDate = record.estimatedChargeCompletionDate {
+          try node.set("estimatedChargeCompletionDate", dateFormatter.string(from: estimatedChargeCompletionDate))
+        }
         try node.set("isConnected", record.isConnected)
         try node.set("isLocked", record.isLocked)
         try node.set("latitude", record.latitude)
@@ -62,6 +65,9 @@ final class Routes: RouteCollection {
       try ctx.set("record.batteryPercent", record.batteryPercent)
       try ctx.set("record.fuelPercent", record.fuelPercent)
       try ctx.set("record.isCharging", record.isCharging)
+      if let estimatedChargeCompletionDate = record.estimatedChargeCompletionDate {
+        try ctx.set("estimatedChargeCompletionDate", dateFormatter.string(from: estimatedChargeCompletionDate))
+      }
       try ctx.set("record.isConnected", record.isConnected)
       try ctx.set("record.isLocked", record.isLocked)
       try ctx.set("record.latitude", record.latitude)

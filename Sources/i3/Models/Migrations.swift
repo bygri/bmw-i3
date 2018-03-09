@@ -5,6 +5,7 @@ struct Migrations {
 
   static func add(to config: Config) {
     config.preparations.append(Migrations.V1.self)
+    config.preparations.append(Migrations.V2.self)
   }
 
   struct V1: Preparation {
@@ -40,6 +41,15 @@ struct Migrations {
       try database.delete(Record.self)
       try database.delete(RawRecord.self)
     }
+  }
+
+  struct V2: Preparation {
+    static func prepare(_ database: Database) throws {
+      try database.modify(Record.self) { builder in
+        builder.date("estimatedChargeCompletionDate", optional: true)
+      }
+    }
+    static func revert(_ database: Database) throws {}
   }
 
 }

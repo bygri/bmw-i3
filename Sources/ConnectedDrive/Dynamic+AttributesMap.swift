@@ -20,7 +20,7 @@ extension DynamicResponse {
     public let chargingLogicCurrentlyActive: ChargingLogic
     public let chargingStatus: ChargingStatus
     public let chargingSystemStatus: ChargingStatus
-    public let chargingTimeRemaining: String?
+    public let chargingTimeRemaining: Double?
     public let checkControlMessages: String
     public let conditionBasedServices: String
     public let connectorStatus: ConnectorStatus
@@ -166,7 +166,7 @@ extension DynamicResponse {
       chargingLogicCurrentlyActive = try values.decode(ChargingLogic.self, forKey: .chargingLogicCurrentlyActive)
       chargingStatus = try values.decode(ChargingStatus.self, forKey: .chargingStatus)
       chargingSystemStatus = try values.decode(ChargingStatus.self, forKey: .chargingSystemStatus)
-      chargingTimeRemaining = try values.decodeIfPresent(String.self, forKey: .chargingTimeRemaining)
+      chargingTimeRemaining = try unwrapDoubleIfPresent(from: values.decodeIfPresent(String.self, forKey: .chargingTimeRemaining))
       checkControlMessages = try values.decode(String.self, forKey: .checkControlMessages)
       conditionBasedServices = try values.decode(String.self, forKey: .conditionBasedServices)
       connectorStatus = try values.decode(ConnectorStatus.self, forKey: .connectorStatus)
@@ -321,8 +321,22 @@ private func unwrapInt(from string: String) throws -> Int {
   }
   return unwrapped
 }
+private func unwrapIntIfPresent(from string: String?) throws -> Int? {
+  guard let string = string else { return nil }
+  guard let unwrapped = Int(string) else {
+    throw ConnectedDriveError.invalidConversion
+  }
+  return unwrapped
+}
 
 private func unwrapDouble(from string: String) throws -> Double {
+  guard let unwrapped = Double(string) else {
+    throw ConnectedDriveError.invalidConversion
+  }
+  return unwrapped
+}
+private func unwrapDoubleIfPresent(from string: String?) throws -> Double? {
+  guard let string = string else { return nil }
   guard let unwrapped = Double(string) else {
     throw ConnectedDriveError.invalidConversion
   }

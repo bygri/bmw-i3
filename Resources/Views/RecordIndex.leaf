@@ -13,6 +13,7 @@
           <th>Battery</th>
           <th>Fuel</th>
           <th>Charging</th>
+          <th>Estimated done</th>
           <th>Connected</th>
           <th>Locked</th>
           <th>Latitude</th>
@@ -33,6 +34,7 @@
           <td>#(record.batteryPercent)%</td>
           <td>#(record.fuelPercent)%</td>
           <td>#(record.isCharging)</td>
+          <td>#(record.estimatedChargeCompletionDate)</td>
           <td>#(record.isConnected)</td>
           <td>#(record.isLocked)</td>
           <td>#(record.latitude)</td>

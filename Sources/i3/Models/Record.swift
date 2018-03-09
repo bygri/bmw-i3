@@ -17,6 +17,7 @@ final class Record: Model {
   let fuelPercent: Int
 
   let isCharging: Bool
+  let estimatedChargeCompletionDate: Date?
   let isConnected: Bool
   let isLocked: Bool
 
@@ -43,6 +44,11 @@ final class Record: Model {
     batteryPercent = attributes.chargingLevelHv
     // batteryPercent = attributes.socHVPercent // this doesnt appear to change much
     fuelPercent = attributes.fuelPercent
+    if let secondsToCharge = attributes.chargingTimeRemaining {
+      estimatedChargeCompletionDate = attributes.updateTime + TimeInterval(secondsToCharge)
+    } else {
+      estimatedChargeCompletionDate = nil
+    }
     isCharging = attributes.chargingStatus == .chargingActive
     isConnected = attributes.connectorStatus == .connected
     isLocked = attributes.doorLockState == .secured
@@ -66,6 +72,7 @@ final class Record: Model {
     batteryPercent = try row.get("batteryPercent")
     fuelPercent = try row.get("fuelPercent")
     isCharging = try row.get("isCharging")
+    estimatedChargeCompletionDate = try row.get("estimatedChargeCompletionDate")
     isConnected = try row.get("isConnected")
     isLocked = try row.get("isLocked")
     chargingEndResult = try DynamicResponse.ChargingEndResult(rawValue: row.get("chargingEndResult"))!
@@ -86,6 +93,7 @@ final class Record: Model {
     try row.set("batteryPercent", batteryPercent)
     try row.set("fuelPercent", fuelPercent)
     try row.set("isCharging", isCharging)
+    try row.set("estimatedChargeCompletionDate", estimatedChargeCompletionDate)
     try row.set("isConnected", isConnected)
     try row.set("isLocked", isLocked)
     try row.set("chargingEndResult", chargingEndResult.rawValue)
