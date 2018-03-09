@@ -25,7 +25,7 @@ final class Parse: Command, ConfigInitializable {
     // If argument "reset" is included, clear all Records first.
     if arguments.contains("reset") {
       log.info("Deleting all existing parsed records.")
-      try Record.database?.raw("DELETE FROM `\(Record.entity)`")
+      try Record.makeQuery().delete()
     }
     // Remove parse errors from all existing raw records. We'll try them again.
     try RawRecord.database?.raw("UPDATE `\(RawRecord.entity)` SET `parseError` = NULL")
