@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile-up
     ports:
-      - "8080:8080"
+      - "8055:8080"
     volumes:
       - .:/app
     stdin_open: true

@@ -42,14 +42,21 @@ public final class Provider: Vapor.Provider {
     guard args.count == 0 || args.first == "serve" else {
       return
     }
+    let df = DateFormatter()
+    df.dateStyle = .short
+    df.timeStyle = .short
+    df.timeZone = TimeZone(identifier: "Australia/Sydney")
     Jobs.add(
       interval: .seconds(5*60),
       action: {
         // Run a Fetch, and then a Parse.
+        drop.log.info("JOB: Beginning job.")
         try Fetch(config: drop.config).run(arguments: [])
         try Parse(config: drop.config).run(arguments: [])
+        drop.log.info("JOB: Job completed successfully at \(df.string(from: Date())). Next one in 5 minutes.")
       },
       onError: { error in
+        drop.log.info("JOB: Error in job at \(df.string(from: Date())); retrying in 5 minutes.")
         return .retry(after: .seconds(5*60))
       }
     )
