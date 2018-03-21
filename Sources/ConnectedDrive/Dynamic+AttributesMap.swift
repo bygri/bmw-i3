@@ -254,6 +254,7 @@ extension DynamicResponse {
   public enum ChargingStatus: String, Codable {
     case chargingActive = "CHARGINGACTIVE"
     case chargingEnded = "CHARGINGENDED"
+    case chargingError = "CHARGINGERROR"
     case noCharging = "NOCHARGING"
   }
   public enum ConnectorStatus: String, Codable {
