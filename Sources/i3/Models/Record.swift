@@ -8,6 +8,12 @@ Stores useful info from ConnectedDrive in a queryable form.
 */
 final class Record: Model {
 
+  enum Error: Swift.Error {
+    case invalidEndResult(String)
+    case invalidEndReason(String)
+    case invalidUpdateReason(String)
+  }
+
   let date: Date
   let odometer: Int
 
@@ -75,13 +81,22 @@ final class Record: Model {
     estimatedChargeCompletionDate = try row.get("estimatedChargeCompletionDate")
     isConnected = try row.get("isConnected")
     isLocked = try row.get("isLocked")
-    chargingEndResult = try DynamicResponse.ChargingEndResult(rawValue: row.get("chargingEndResult"))!
-    chargingEndReason = try DynamicResponse.ChargingEndReason(rawValue: row.get("chargingEndReason"))!
-    updateReason = try DynamicResponse.UpdateReason(rawValue: row.get("updateReason"))!
     latitude = try row.get("latitude")
     longitude = try row.get("longitude")
     heading = try row.get("heading")
     rawRecordId = try row.get("rawRecordId")
+    guard let unwrappedEndResult = try DynamicResponse.ChargingEndResult(rawValue: row.get("chargingEndResult")) else {
+      throw try Error.invalidEndResult(row.get("chargingEndResult"))
+    }
+    chargingEndResult = unwrappedEndResult
+    guard let unwrappedEndReason = try DynamicResponse.ChargingEndReason(rawValue: row.get("chargingEndReason")) else {
+      throw try Error.invalidEndReason(row.get("chargingEndReason"))
+    }
+    chargingEndReason = unwrappedEndReason
+    guard let unwrappedUpdateReason = try DynamicResponse.UpdateReason(rawValue: row.get("updateReason")) else {
+      throw try Error.invalidUpdateReason(row.get("updateReason"))
+    }
+    updateReason = unwrappedUpdateReason
   }
 
   func makeRow() throws -> Row {
