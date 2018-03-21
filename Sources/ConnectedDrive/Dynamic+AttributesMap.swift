@@ -310,6 +310,7 @@ extension DynamicResponse {
   }
   public enum UpdateReason: String, Codable {
     case chargingDone = "CHARGINGDONE"
+    case chargingInterrupted = "CHARGINGINTERRUPTED"
     case chargingStarted = "CHARGINGSTARTED"
     case doorStateChanged = "DOORSTATECHANGED"
     case predictionUpdate = "PREDICTIONUPDATE"
