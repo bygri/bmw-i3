@@ -236,8 +236,9 @@ extension DynamicResponse {
     case powergridFailed = "POWERGRID_FAILED"
   }
   public enum ChargingEndResult: String, Codable {
-    case unknown = "UNKNOWN"
+    case failed = "FAILED"
     case success = "SUCCESS"
+    case unknown = "UNKNOWN"
   }
   public enum ChargingHVStatus: String, Codable {
     case charging = "CHARGING"
