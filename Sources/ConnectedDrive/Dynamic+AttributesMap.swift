@@ -240,6 +240,7 @@ extension DynamicResponse {
   }
   public enum ChargingHVStatus: String, Codable {
     case charging = "CHARGING"
+    case error = "ERROR"
     case finishedFullyCharged = "FINISHED_FULLY_CHARGED"
     case invalid = "INVALID"
   }
