@@ -22,11 +22,27 @@ final class Fetch: Command, ConfigInitializable {
   let password: String
   let vin: String
 
-  init(config: Config) throws {
-    cache = try config.resolveCache()
-    client = try config.resolveClient()
-    console = try config.resolveConsole()
-    log = try config.resolveLog()
+  convenience init(config: Config) throws {
+    try self.init(
+      config: config,
+      cache: config.resolveCache(),
+      client: config.resolveClient(),
+      console: config.resolveConsole(),
+      log: config.resolveLog()
+    )
+  }
+
+  init(
+    config: Config,
+    cache: CacheProtocol,
+    client: ClientFactoryProtocol,
+    console: ConsoleProtocol,
+    log: LogProtocol
+  ) throws {
+    self.cache = cache
+    self.client = client
+    self.console = console
+    self.log = log
     guard let cfg = config["connecteddrive"] else {
       throw ConfigError.missingFile("connecteddrive")
     }

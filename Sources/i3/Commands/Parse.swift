@@ -15,9 +15,19 @@ final class Parse: Command, ConfigInitializable {
   let console: ConsoleProtocol
   let log: LogProtocol
 
-  init(config: Config) throws {
-    console = try config.resolveConsole()
-    log = try config.resolveLog()
+  convenience init(config: Config) throws {
+    try self.init(
+      console: config.resolveConsole(),
+      log: config.resolveLog()
+    )
+  }
+
+  init(
+    console: ConsoleProtocol,
+    log: LogProtocol
+  ) throws {
+    self.console = console
+    self.log = log
   }
 
   func run(arguments: [String]) throws  {

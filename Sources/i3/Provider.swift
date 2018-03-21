@@ -51,12 +51,22 @@ public final class Provider: Vapor.Provider {
       action: {
         // Run a Fetch, and then a Parse.
         drop.log.info("JOB: Beginning job.")
-        try Fetch(config: drop.config).run(arguments: [])
-        try Parse(config: drop.config).run(arguments: [])
+        try Fetch(
+          config: drop.config,
+          cache: drop.cache,
+          client: drop.client,
+          console: drop.console,
+          log: drop.log
+        ).run(arguments: [])
+        try Parse(
+          console: drop.console,
+          log: drop.log
+        ).run(arguments: [])
         drop.log.info("JOB: Job completed successfully at \(df.string(from: Date())). Next one in 5 minutes.")
       },
       onError: { error in
-        drop.log.info("JOB: Error in job at \(df.string(from: Date())); retrying in 5 minutes.")
+        drop.log.error(String(describing: error))
+        drop.log.info("JOB: Error in job at \(df.string(from: Date())); retrying in 5 minutes. ")
         return .retry(after: .seconds(5*60))
       }
     )
