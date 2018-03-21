@@ -233,6 +233,7 @@ extension DynamicResponse {
     case chargingGoalReached = "CHARGING_GOAL_REACHED"
     case connectorRemoved = "CONNECTOR_REMOVED"
     case endRequestedByDriver = "END_REQUESTED_BY_DRIVER"
+    case powergridFailed = "POWERGRID_FAILED"
   }
   public enum ChargingEndResult: String, Codable {
     case unknown = "UNKNOWN"
