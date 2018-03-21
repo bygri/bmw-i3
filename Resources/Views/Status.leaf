@@ -3,5 +3,23 @@
 #export("title") {Status}
 
 #export("content") {
-  Home
+  <ul>
+    <li>Date: #(state.date)</li>
+    <li>Odometer: #(state.odometer)</li>
+    <li>Locked: #if(state.isLocked) {Yes} ##() {No}</li>
+    <li>Latitude: #(state.location.latitude)</li>
+    <li>Longitude: #(state.location.longitude)</li>
+    <li>Heading: #(state.location.heading)</li>
+    <li>Charge state:
+      #equal(state.chargeState, "charging") {
+        Charging at #(state.chargeLevel)%
+      }
+      ##equal(state.chargeState, "notCharging") {
+        Not charging at #(state.chargeLevel)%
+      }
+      ##equal(state.chargeState, "chargingError") {
+        Charging error at #(state.chargeLevel)%
+      }
+    </li>
+  </ul>
 }

@@ -3,7 +3,8 @@
   "log": "console",
   "commands": [
     "fetch",
-    "parse"
+    "parse",
+    "state"
   ],
   "cache": "fluent",
   "view": "leaf"

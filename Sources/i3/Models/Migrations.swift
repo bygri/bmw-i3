@@ -6,6 +6,7 @@ struct Migrations {
   static func add(to config: Config) {
     config.preparations.append(Migrations.V1.self)
     config.preparations.append(Migrations.V2.self)
+    config.preparations.append(Migrations.V3.self)
   }
 
   struct V1: Preparation {
@@ -50,6 +51,27 @@ struct Migrations {
       }
     }
     static func revert(_ database: Database) throws {}
+  }
+
+  struct V3: Preparation {
+    static func prepare(_ database: Database) throws {
+      try database.create(VehicleState.self) { builder in
+        builder.id()
+        builder.date("date")
+        builder.int("odometer")
+        builder.bool("isLocked")
+        builder.double("locationLatitude")
+        builder.double("locationLongitude")
+        builder.int("locationHeading")
+        builder.string("chargeState")
+        builder.int("chargeLevel")
+        builder.string("fuelState")
+        builder.int("fuelLevel")
+      }
+    }
+    static func revert(_ database: Database) throws {
+      try database.delete(VehicleState.self)
+    }
   }
 
 }

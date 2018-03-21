@@ -17,11 +17,13 @@ public final class Provider: Vapor.Provider {
     Migrations.add(to: config)
     config.addConfigurable(command: Fetch.init, name: "fetch")
     config.addConfigurable(command: Parse.init, name: "parse")
+    config.addConfigurable(command: State.init, name: "state")
   }
 
   public func boot(_ drop: Droplet) throws {
     RawRecord.database = drop.database
     Record.database = drop.database
+    VehicleState.database = drop.database
     guard let cfg = drop.config["connecteddrive"] else {
       throw ConfigError.missingFile("connecteddrive")
     }
@@ -59,6 +61,10 @@ public final class Provider: Vapor.Provider {
           log: drop.log
         ).run(arguments: [])
         try Parse(
+          console: drop.console,
+          log: drop.log
+        ).run(arguments: [])
+        try State(
           console: drop.console,
           log: drop.log
         ).run(arguments: [])

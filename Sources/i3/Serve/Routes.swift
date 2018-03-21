@@ -15,7 +15,31 @@ final class Routes: RouteCollection {
   func build(_ builder: RouteBuilder) throws {
     // Status page
     builder.get() { req in
-      return try self.view.make("Status")
+      let dateFormatter = DateFormatter()
+      dateFormatter.timeZone = self.timezone
+      dateFormatter.dateStyle = .short
+      dateFormatter.timeStyle = .short
+      var ctx = Node([:])
+      if let state = try VehicleState.makeQuery().first() {
+        try ctx.set("state.odometer", state.odometer)
+        try ctx.set("state.date", dateFormatter.string(from: state.date))
+        try ctx.set("state.isLocked", state.isLocked)
+        try ctx.set("state.location.latitude", state.location.latitude)
+        try ctx.set("state.location.longitude", state.location.longitude)
+        try ctx.set("state.location.heading", state.location.heading)
+        switch state.chargeState {
+          case let .charging(level):
+            try ctx.set("state.chargeState", "charging")
+            try ctx.set("state.chargeLevel", level)
+          case let .notCharging(level):
+            try ctx.set("state.chargeState", "notCharging")
+            try ctx.set("state.chargeLevel", level)
+          case let .chargingError(level):
+            try ctx.set("state.chargeState", "chargeError")
+            try ctx.set("state.chargeLevel", level)
+        }
+      }
+      return try self.view.make("Status", ctx)
     }
 
     // Records index: show all records
