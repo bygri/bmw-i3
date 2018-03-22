@@ -9,7 +9,7 @@
     <li>Locked: #if(state.isLocked) {Yes} ##() {No}</li>
     <li>Latitude: #(state.location.latitude)</li>
     <li>Longitude: #(state.location.longitude)</li>
-    <li>Heading: #(state.location.heading)</li>
+    <li>Heading: #(state.location.heading)º <div style='display: inline-block; transform: rotate(#(state.location.heading)deg);'>&#()x2191;</div></li>
     <li>Charge state:
       #equal(state.chargeState, "charging") {
         Charging at #(state.chargeLevel)%
