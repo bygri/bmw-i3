@@ -14,7 +14,6 @@ final class RawRecord: Model {
   let date: Date
   let data: Bytes
   let checksum: Int
-  var parseError: String?
 
   init(data: Bytes) {
     date = Date()
@@ -31,7 +30,6 @@ final class RawRecord: Model {
     let dataBlob: Blob = try row.get("data")
     data = dataBlob.bytes
     checksum = try row.get("checksum")
-    parseError = try row.get("parseError")
   }
 
   func makeRow() throws -> Row {
@@ -39,7 +37,6 @@ final class RawRecord: Model {
     try row.set("date", date)
     try row.set("data", Blob(bytes: data))
     try row.set("checksum", checksum)
-    try row.set("parseError", parseError)
     return row
   }
 

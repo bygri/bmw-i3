@@ -7,6 +7,7 @@ struct Migrations {
     config.preparations.append(Migrations.V1.self)
     config.preparations.append(Migrations.V2.self)
     config.preparations.append(Migrations.V3.self)
+    config.preparations.append(Migrations.V4.self)
   }
 
   struct V1: Preparation {
@@ -71,6 +72,28 @@ struct Migrations {
     }
     static func revert(_ database: Database) throws {
       try database.delete(VehicleState.self)
+    }
+  }
+
+  struct V4: Preparation {
+    static func prepare(_ database: Database) throws {
+      try database.modify(RawRecord.self) { builder in
+        builder.delete("parseError")
+      }
+      try database.create(RawRecordError.self) { builder in
+        builder.id()
+        builder.foreignId(for: RawRecord.self)
+        builder.custom("description", type: "TEXT")
+        builder.bool("isPermanent")
+      }
+      Record.database = database
+      try Record.makeQuery().delete()
+    }
+    static func revert(_ database: Database) throws {
+      try database.modify(RawRecord.self) { builder in
+        builder.string("parseError", optional: true)
+      }
+      try database.delete(RawRecordError.self)
     }
   }
 

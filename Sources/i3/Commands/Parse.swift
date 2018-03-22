@@ -38,11 +38,12 @@ final class Parse: Command, ConfigInitializable {
       try Record.makeQuery().delete()
     }
     // Remove parse errors from all existing raw records. We'll try them again.
-    try RawRecord.database?.raw("UPDATE `\(RawRecord.entity)` SET `parseError` = NULL")
-    // Find all unparsed RawRecords, and attempt to parse them into Records.
+    try RawRecordError.makeQuery().filter("isPermanent", false).delete()
+    // Find all RawRecords without parses or errors, and attempt to parse them into Records.
     let rawQuery = try RawRecord.makeQuery()
       .join(kind: .outer, Record.self)
-      .filter("parseError", nil)
+      .join(kind: .outer, RawRecordError.self)
+      .filter(RawRecordError.self, "id", nil)
       .filter(Record.self, "id", nil)
     try log.info("\(rawQuery.count()) raw records to parse.")
     while try rawQuery.count() > 0 {
@@ -53,10 +54,9 @@ final class Parse: Command, ConfigInitializable {
           try record.save()
           log.info("Successfully parsed raw record.")
         } catch {
-          let errorMessage = String(describing: error)
-          log.error("Error parsing raw record: \(errorMessage)")
-          rawRecord.parseError = errorMessage
-          try rawRecord.save()
+          let recordError = try RawRecordError(rawRecord, error)
+          log.error(recordError.description)
+          try recordError.save()
         }
       }
     }

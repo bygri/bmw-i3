@@ -22,6 +22,7 @@ public final class Provider: Vapor.Provider {
 
   public func boot(_ drop: Droplet) throws {
     RawRecord.database = drop.database
+    RawRecordError.database = drop.database
     Record.database = drop.database
     VehicleState.database = drop.database
     guard let cfg = drop.config["connecteddrive"] else {

@@ -74,6 +74,10 @@ final class Fetch: Command, ConfigInitializable {
       uri: host + DynamicRequest.url(for: vin),
       headers: ["Authorization": "Bearer \(token)"])
     let response = try client.respond(to: request)
+    guard response.status == .ok else {
+      log.error("Bad status code from ConnectedDrive: \(response.status)")
+      return
+    }
     guard let bytes = response.body.bytes else {
       log.error("Bad response from ConnectedDrive: \(response)")
       return
