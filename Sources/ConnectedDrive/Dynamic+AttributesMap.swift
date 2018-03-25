@@ -284,6 +284,7 @@ extension DynamicResponse {
   }
   public enum OpenCloseState: String, Codable {
     case closed = "CLOSED"
+    case open = "OPEN"
   }
   public enum PrognosisWhileCharging: String, Codable {
     case isPerformed = "IS_PERFORMED"
@@ -302,11 +303,13 @@ extension DynamicResponse {
   }
   public enum TrunkState: String, Codable {
     case closed = "CLOSED"
+    case open = "OPEN"
   }
   public enum WindowStatus: String, Codable {
     case closed = "CLOSED"
     case intermediate = "INTERMEDIATE"
     case invalid = "INVALID"
+    case open = "OPEN"
   }
   public enum UpdateReason: String, Codable {
     case chargingDone = "CHARGINGDONE"
