@@ -278,6 +278,7 @@ extension DynamicResponse {
   }
   public enum HoodState: String, Codable {
     case closed = "CLOSED"
+    case open = "OPEN"
   }
   public enum LightsParking: String, Codable {
     case off = "OFF"
@@ -292,6 +293,7 @@ extension DynamicResponse {
   }
   public enum ShdStatusUnified: String, Codable {
     case closed = "CLOSED"
+    case open = "OPEN"
     case invalid = "INVALID"
   }
   public enum SingleImmediateCharging: String, Codable {
@@ -319,6 +321,7 @@ extension DynamicResponse {
     case predictionUpdate = "PREDICTIONUPDATE"
     case vehicleMoving = "VEHICLE_MOVING"
     case vehicleSecured = "VEHICLE_SECURED"
+    case vehicleShutdown = "VEHCSHUTDOWN"
     case vehicleShutdownSecured = "VEHCSHUTDOWN_SECURED"
   }
 }

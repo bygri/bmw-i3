@@ -8,9 +8,10 @@ services:
       - "8055:8080"
     volumes:
       - .:/app
-    stdin_open: true
-    tty: true
-    entrypoint: bash
+    # stdin_open: true
+    # tty: true
+    # entrypoint: bash
+    entrypoint: bash -c "swift build && swift run"
   db:
     image: mysql
     environment:
