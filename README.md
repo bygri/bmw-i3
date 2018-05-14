@@ -1,12 +1,15 @@
 # BMW i3 controller
 
-**Very much a work in progress.**
-
 The i3 is a cool car, and the app's not bad. But we can do better.
+
+**Sadly I no longer have an i3 and am doing no further maintenance.**
+However, this service is able to download, and store data points for your i3 which
+you might be able to make use of.
+If anyone would like to take over this project, please open an issue.
 
 # Design goals
 
-This is a self-hosted service (on your desktop computer or a server) that *monitors*
+This was intended to be a self-hosted service (on your desktop computer or a server) that *monitors*
 your car in ConnectedDrive, *notifies* you of any significant change in circumstance,
 proactively *acts* upon your pre-determined instructions, and *reports* useful
 information on demand.
@@ -26,8 +29,8 @@ based on events in your calendar.
 
 ## Current status
 
-Working on the *monitor* aspect right now. Since no public spec is provided for the
-ConnectedDrive API, the focus is on retrieving as much data as possible and working
+The *monitor* aspect has been implemented. Since no public spec is provided for the
+ConnectedDrive API, the focus was on retrieving as much data as possible and working
 out what possible values are returned.
 
 All raw data from ConnectedDrive is stored so that future versions can retroactively
@@ -35,7 +38,7 @@ re-parse and analyse historical information.
 
 # Installation and usage
 
-**NB: At the moment, this service is only of interest to developers. More useful features to come.**
+**NB: At the moment, this service is only of interest to developers.**
 
 You have to run this on your own machine. I don't want your BMW credentials.
 
@@ -81,9 +84,6 @@ To stop it again, open a new terminal window and run `docker-compose down`.
 It's harder.
 
 # Suggestions, contributions, improvements
-
-I'm very interested in taking suggestions from the community. If there's a feature you'd like
-added, please create a [GitHub issue](https://github.com/bygri/bmw-i3/issues/new) for it.
 
 If you are running the server, and see red error text appear, that probably means ConnectedDrive
 has sent a response I haven't seen yet. Please copy and paste the message into a GitHub issue
